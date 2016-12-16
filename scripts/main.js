@@ -119,18 +119,12 @@ export default class extends Phaser.State {
 
       // Move using arrow keys
       var dx = 0;
-      var dy = 0;
       if (this.keys.left.isDown) {
         dx = -1;
       } else if (this.keys.right.isDown) {
         dx = 1;
       }
-      if (this.keys.up.isDown) {
-        dy = -1;
-      } else if (this.keys.down.isDown) {
-        dy = 1;
-      }
-      this.player.move(dx, dy);
+      this.player.move(dx);
 
       // firing
       if (this.keys.fire.isDown) {

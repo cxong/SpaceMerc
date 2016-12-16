@@ -43,7 +43,7 @@ export default class extends Phaser.Sprite {
     this.bulletGroup = bulletGroup;
   }
 
-  move(dx, dy) {
+  move(dx) {
     if (!this.alive) {
       return;
     }
@@ -51,7 +51,8 @@ export default class extends Phaser.Sprite {
       //this.animations.play('idle');
       this.body.velocity.x = 0;
     } else {
-      this.body.velocity.x = dx * this.speed;
+      this.body.velocity.x = dx * this.speed
+      this.scale.x = dx > 0 ? 1 : -1
       /*if (dx > 0) {
         this.animations.play('run_right');
       } else if (dx < 0) {
