@@ -4,8 +4,9 @@ const GRAVITY = 700
 const SPEED = 130
 const JUMP_SPEED = 350
 const BULLET_SPEED = 700
-const MUZZLE_OFFSET_Y = -24
+const MUZZLE_OFFSET_Y = -22
 const FIRE_DURATION = 150
+const RECOIL = 0.05
 
 export default class extends Phaser.Sprite {
   constructor(game, group, bulletGroup, x, y) {
@@ -15,7 +16,7 @@ export default class extends Phaser.Sprite {
     this.body.collideWorldBounds = true;
     // Slightly smaller body
     this.body.setSize(10, 24, (32 - 10) / 2, 32 - 24);
-    this.anchor.setTo(0.5, 1);
+    this.anchor.setTo(0.5, 1)
     this.body.gravity.y = GRAVITY
     this.speed = SPEED
 
@@ -74,7 +75,14 @@ export default class extends Phaser.Sprite {
     const bullet = this.bulletGroup.create(
       this.x, this.y + MUZZLE_OFFSET_Y, 'bullet')
     this.game.physics.enable(bullet, Phaser.Physics.ARCADE)
-    bullet.body.velocity.x = BULLET_SPEED * this.scale.x
+    bullet.anchor.setTo(0.5)
+    const v = new Phaser.Point(this.scale.x, 0)
+    v.add(
+      (this.game.rnd.frac() - 0.5) * RECOIL,
+      (this.game.rnd.frac() - 0.5) * RECOIL)
+    v.setMagnitude(BULLET_SPEED)
+    bullet.body.velocity = v
+    bullet.rotation = Math.atan2(v.y, v.x)
     bullet.outOfBoundsKill = true
     bullet.body.gravity.y = 0
     this.sounds.shoot.play()
