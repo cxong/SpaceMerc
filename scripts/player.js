@@ -3,6 +3,7 @@ import Phaser from 'phaser'
 const GRAVITY = 300
 const SPEED = 130
 const JUMP_SPEED = 350
+const BULLET_SPEED = 1000
 
 export default class extends Phaser.Sprite {
   constructor(game, group, bulletGroup, x, y) {
@@ -67,16 +68,13 @@ export default class extends Phaser.Sprite {
     if (!this.alive) {
       return;
     }
-    // TODO: shooting
-    /*new Bullet(
-      this.game, this.bulletGroup,
-      'player_bullet', 'player_explosion',
-      this.x, this.y, 0, -this.BULLET_DY
-    );
-    this.fireCounter = this.FIRE_DURATION_TOTAL;
-    this.animations.play('fire');
-    this.body.velocity.setTo(0);
-    this.sounds.shoot.play();*/
+    const bullet = this.bulletGroup.create(this.x, this.y, 'bullet')
+    this.game.physics.enable(bullet, Phaser.Physics.ARCADE)
+    bullet.body.velocity.x = BULLET_SPEED * this.scale.x
+    bullet.outOfBoundsKill = true
+    this.sounds.shoot.play()
+    /*this.fireCounter = this.FIRE_DURATION_TOTAL;
+    this.animations.play('fire');*/
   }
 
   jump() {
