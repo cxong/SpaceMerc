@@ -15,6 +15,8 @@ export default class extends Phaser.Sprite {
     this.anchor.setTo(0.5, 0.5);
     this.body.gravity.y = GRAVITY
     this.speed = SPEED
+
+    this.wasOnFloor = false;
     // animations
     // TODO:
     //this.animations.add('lasso', [0, 1, 2, 3], 20, false);
@@ -32,7 +34,8 @@ export default class extends Phaser.Sprite {
     this.invincibilityCounter = 0;
 
     this.sounds = {
-      // TODO: jump
+      jump: game.add.audio('jump'),
+      land: game.add.audio('land'),
       shoot: game.add.audio('shoot')
     };
 
@@ -84,11 +87,17 @@ export default class extends Phaser.Sprite {
     this.body.velocity.setTo(0);
     this.sounds.jump.play();*/
     if (this.body.onFloor()) {
-        this.body.velocity.y = -JUMP_SPEED;
+      this.body.velocity.y = -JUMP_SPEED
+      this.sounds.jump.play()
     }
   }
 
   update() {
+    const onFloor = this.body.onFloor()
+    if (onFloor && !this.wasOnFloor) {
+      this.sounds.land.play()
+    }
+    this.wasOnFloor = onFloor
     if (this.invincibilityCounter > 0) {
       this.invincibilityCounter -= this.game.time.elapsed;
       // Blink when invincible

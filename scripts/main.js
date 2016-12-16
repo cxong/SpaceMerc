@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from './graphics'
+import Music from './music'
 import Player from './player'
 import Wave from './wave'
 
@@ -23,12 +24,8 @@ export default class extends Phaser.State {
       nospawn: this.game.add.audio('nospawn'),
       respawn: this.game.add.audio('respawn'),
       spawn: this.game.add.audio('spawn')
-    };
-    this.musics = {
-      title: this.game.add.audio('title'),
-      l1: this.game.add.audio('1')
     }
-    this.music = null
+    this.music = new Music(this.game)
 
     this.groups = {
       ground: this.game.add.group(),
@@ -40,9 +37,9 @@ export default class extends Phaser.State {
       ui: this.game.add.group()
     };
 
-    const ground = this.game.add.tileSprite(
+    /*const ground = this.game.add.tileSprite(
       0, SCREEN_HEIGHT - 43, SCREEN_WIDTH, 43, 'ground');
-    this.groups.ground.add(ground);
+    this.groups.ground.add(ground);*/
 
     this.text = this.game.add.text(
       SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, '', {
@@ -56,21 +53,13 @@ export default class extends Phaser.State {
     this.restart();
   }
 
-  playMusic(music) {
-    if (this.music) {
-      this.music.fadeOut(1000)
-    }
-    music.fadeIn(1000, true)
-    this.music = music
-  }
-
   restart() {
     this.state = 'title';
     //this.groups.dialogs.alpha = 1;
     this.game.input.keyboard.addKey(Phaser.Keyboard.X).onDown.add(function() {
       this.start();
     }, this);
-    this.playMusic(this.musics.title)
+    this.music.play('title')
   }
 
   start() {
@@ -100,7 +89,7 @@ export default class extends Phaser.State {
     });
 
     this.state = 'play';
-    this.playMusic(this.musics.l1)
+    this.music.play('l1')
   }
 
   spawnPlayer() {

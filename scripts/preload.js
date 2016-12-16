@@ -9,7 +9,7 @@ const assets = {
     'ground'
   ],
   sounds: [
-    'catch', 'die', 'hit',
+    'catch', 'die', 'hit', 'land', 'jump',
     'nospawn', 'respawn', 'shoot', 'spawn'
   ],
   music: ['title', '1']
