@@ -3,6 +3,8 @@ import { SCREEN_WIDTH, SCREEN_HEIGHT } from './graphics'
 import Player from './player'
 import Wave from './wave'
 
+const GRAVITY = 400
+
 export default class extends Phaser.State {
   preload() {
     this.resetKeys();
@@ -12,6 +14,7 @@ export default class extends Phaser.State {
     this.game.stage.backgroundColor = 0x4f3458;
 
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
+    this.game.physics.arcade.gravity.y = GRAVITY
 
     this.sounds = {
       catch: this.game.add.audio('catch'),

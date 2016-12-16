@@ -1,5 +1,9 @@
 import Phaser from 'phaser'
 
+const GRAVITY = 300
+const SPEED = 130
+const JUMP_SPEED = 350
+
 export default class extends Phaser.Sprite {
   constructor(game, group, bulletGroup, x, y) {
     super(game, x, y, 'merc');
@@ -8,8 +12,9 @@ export default class extends Phaser.Sprite {
     this.body.collideWorldBounds = true;
     // Slightly smaller body
     this.body.setSize(10, 24);
-    this.anchor.setTo(0.5, 1.0);
-    this.speed = 60;
+    this.anchor.setTo(0.5, 0.5);
+    this.body.gravity.y = GRAVITY
+    this.speed = SPEED
     // animations
     // TODO:
     //this.animations.add('lasso', [0, 1, 2, 3], 20, false);
@@ -39,11 +44,11 @@ export default class extends Phaser.Sprite {
     if (!this.alive) {
       return;
     }
-    if (dx === 0 && dy === 0) {
+    if (dx === 0) {
       //this.animations.play('idle');
-      this.body.velocity.setTo(0);
+      this.body.velocity.x = 0;
     } else {
-      this.body.velocity.setTo(dx * this.speed, dy * this.speed);
+      this.body.velocity.x = dx * this.speed;
       /*if (dx > 0) {
         this.animations.play('run_right');
       } else if (dx < 0) {
@@ -78,6 +83,9 @@ export default class extends Phaser.Sprite {
     /*this.animations.play('jump');
     this.body.velocity.setTo(0);
     this.sounds.jump.play();*/
+    if (this.body.onFloor()) {
+        this.body.velocity.y = -JUMP_SPEED;
+    }
   }
 
   update() {
