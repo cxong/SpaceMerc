@@ -4,6 +4,7 @@ const GRAVITY = 300
 const SPEED = 130
 const JUMP_SPEED = 350
 const BULLET_SPEED = 1000
+const MUZZLE_OFFSET_Y = -24
 
 export default class extends Phaser.Sprite {
   constructor(game, group, bulletGroup, x, y) {
@@ -68,7 +69,8 @@ export default class extends Phaser.Sprite {
     if (!this.alive) {
       return;
     }
-    const bullet = this.bulletGroup.create(this.x, this.y, 'bullet')
+    const bullet = this.bulletGroup.create(
+      this.x, this.y + MUZZLE_OFFSET_Y, 'bullet')
     this.game.physics.enable(bullet, Phaser.Physics.ARCADE)
     bullet.body.velocity.x = BULLET_SPEED * this.scale.x
     bullet.outOfBoundsKill = true
