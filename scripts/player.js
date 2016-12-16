@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 
-const GRAVITY = 300
+const GRAVITY = 700
 const SPEED = 130
 const JUMP_SPEED = 350
 const BULLET_SPEED = 700
@@ -76,6 +76,7 @@ export default class extends Phaser.Sprite {
     this.game.physics.enable(bullet, Phaser.Physics.ARCADE)
     bullet.body.velocity.x = BULLET_SPEED * this.scale.x
     bullet.outOfBoundsKill = true
+    bullet.body.gravity.y = 0
     this.sounds.shoot.play()
     this.fireCounter = FIRE_DURATION
   }
@@ -101,10 +102,10 @@ export default class extends Phaser.Sprite {
     }
     this.wasOnFloor = onFloor
     if (this.fireCounter > 0) {
-      this.fireCounter -= this.game.time.elapsed
+      this.fireCounter -= this.game.time.physicsElapsedMS
     }
     if (this.invincibilityCounter > 0) {
-      this.invincibilityCounter -= this.game.time.elapsed;
+      this.invincibilityCounter -= this.game.time.physicsElapsedMS
       // Blink when invincible
       this.visible = this.invincibilityCounter / 4 % 4 > 1;
     } else {
