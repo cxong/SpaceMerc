@@ -3,8 +3,9 @@ import Phaser from 'phaser'
 const GRAVITY = 300
 const SPEED = 130
 const JUMP_SPEED = 350
-const BULLET_SPEED = 1000
+const BULLET_SPEED = 700
 const MUZZLE_OFFSET_Y = -24
+const FIRE_DURATION = 150
 
 export default class extends Phaser.Sprite {
   constructor(game, group, bulletGroup, x, y) {
@@ -18,7 +19,8 @@ export default class extends Phaser.Sprite {
     this.body.gravity.y = GRAVITY
     this.speed = SPEED
 
-    this.wasOnFloor = false;
+    this.wasOnFloor = false
+    this.fireCounter = 0
     // animations
     // TODO:
     //this.animations.add('lasso', [0, 1, 2, 3], 20, false);
@@ -66,7 +68,7 @@ export default class extends Phaser.Sprite {
   }
 
   fire() {
-    if (!this.alive) {
+    if (!this.alive || this.fireCounter > 0) {
       return;
     }
     const bullet = this.bulletGroup.create(
@@ -75,8 +77,7 @@ export default class extends Phaser.Sprite {
     bullet.body.velocity.x = BULLET_SPEED * this.scale.x
     bullet.outOfBoundsKill = true
     this.sounds.shoot.play()
-    /*this.fireCounter = this.FIRE_DURATION_TOTAL;
-    this.animations.play('fire');*/
+    this.fireCounter = FIRE_DURATION
   }
 
   jump() {
@@ -99,6 +100,9 @@ export default class extends Phaser.Sprite {
       this.sounds.land.play()
     }
     this.wasOnFloor = onFloor
+    if (this.fireCounter > 0) {
+      this.fireCounter -= this.game.time.elapsed
+    }
     if (this.invincibilityCounter > 0) {
       this.invincibilityCounter -= this.game.time.elapsed;
       // Blink when invincible
