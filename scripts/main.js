@@ -55,9 +55,9 @@ export default class extends Phaser.State {
 
   playMusic(music) {
     if (this.music) {
-      this.music.fadeOut(4000)
+      this.music.fadeOut(1000)
     }
-    music.fadeIn(4000, true)
+    music.fadeIn(1000, true)
     this.music = music
   }
 
@@ -220,6 +220,5 @@ export default class extends Phaser.State {
     if (this.player) {
       this.game.debug.body(this.player);
     }
-    this.game.debug.soundInfo(this.music, 20, 32);
   }
 }
