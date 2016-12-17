@@ -6,7 +6,7 @@ const assets = {
     //['dialog', 320, 240],
   ],
   images: [
-    'ground', 'bullet'
+    'ground', 'bullet', 'robut'
   ],
   sounds: [
     'catch', 'die', 'hit', 'land', 'jump',

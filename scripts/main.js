@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from './graphics'
+import LocationSpawner from './location_spawner'
 import Music from './music'
 import Player from './player'
 import Wave from './wave'
@@ -71,8 +72,9 @@ export default class extends Phaser.State {
     this.spawnPlayer();
 
     this.groups.enemies.destroy(true, true);
-    this.wave = new Wave(this.game, this.groups);
+    this.wave = new Wave(this.game, this.groups)
     // Enemies will be spawned automatically by wave
+    this.locationSpawner = new LocationSpawner(this.game, this.groups)
 
     // Initialise controls
     this.resetKeys();
@@ -113,6 +115,9 @@ export default class extends Phaser.State {
       if (this.textCounter <= 0) {
         this.text.alpha = 0;
       }
+
+      // TODO: camera and update
+      this.locationSpawner.update(0)
 
       // Move using arrow keys
       var dx = 0;
