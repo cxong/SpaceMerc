@@ -19,6 +19,7 @@ export default class extends Phaser.Sprite {
     this.anchor.setTo(0.5, 1)
     this.body.gravity.y = GRAVITY
     this.speed = SPEED
+    this.dir = new Phaser.Point(1, 0)
 
     this.wasOnFloor = false
     this.fireCounter = 0
@@ -48,10 +49,17 @@ export default class extends Phaser.Sprite {
     this.bulletGroup = bulletGroup;
   }
 
-  move(dx) {
+  move(dx, dy) {
     if (!this.alive) {
       return;
     }
+    const dir = new Phaser.Point(dx, dy).normalize()
+    if (dir.isZero()) {
+      this.dir = new Phaser.Point(this.scale.x, 0)
+    } else {
+      this.dir = dir
+    }
+    // TODO: pose/animation
     if (dx === 0) {
       //this.animations.play('idle');
       this.body.velocity.x = 0;
@@ -76,7 +84,7 @@ export default class extends Phaser.Sprite {
       this.x, this.y + MUZZLE_OFFSET_Y, 'bullet')
     this.game.physics.enable(bullet, Phaser.Physics.ARCADE)
     bullet.anchor.setTo(0.5)
-    const v = new Phaser.Point(this.scale.x, 0)
+    const v = this.dir.clone()
     v.add(
       (this.game.rnd.frac() - 0.5) * RECOIL,
       (this.game.rnd.frac() - 0.5) * RECOIL)
