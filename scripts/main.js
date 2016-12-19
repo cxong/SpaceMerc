@@ -161,7 +161,16 @@ export default class extends Phaser.State {
       'y', Phaser.Group.SORT_ASCENDING);
 
     // Platforming
-    this.game.physics.arcade.collide(this.groups.players, this.groups.platforms)
+    this.groups.players.forEach((player) => {
+      player.onFloor = false
+    })
+    this.game.physics.arcade.collide(
+      this.groups.players, this.groups.platforms, (player, platform) => {
+        player.onFloor = player.body.touching.down
+      }, (player, platform) => {
+        // Don't collide if jumping
+        return player.body.velocity.y >= 0
+      })
     this.game.physics.arcade.collide(this.groups.enemies, this.groups.platforms)
 
     // Player bullets to enemy

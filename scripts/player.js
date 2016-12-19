@@ -20,6 +20,7 @@ export default class extends Phaser.Sprite {
     this.body.gravity.y = GRAVITY
     this.speed = SPEED
     this.dir = new Phaser.Point(1, 0)
+    this.onFloor = false
 
     this.wasOnFloor = false
     this.fireCounter = 0
@@ -101,18 +102,18 @@ export default class extends Phaser.Sprite {
     if (!this.alive) {
       return;
     }
-    // TODO: jumping
+    // TODO: animation
     /*this.animations.play('jump');
     this.body.velocity.setTo(0);
     this.sounds.jump.play();*/
-    if (this.body.onFloor()) {
+    if (this.body.onFloor() || this.onFloor) {
       this.body.velocity.y = -JUMP_SPEED
       this.sounds.jump.play()
     }
   }
 
   update() {
-    const onFloor = this.body.onFloor()
+    const onFloor = this.body.onFloor() || this.onFloor
     if (onFloor && !this.wasOnFloor) {
       this.sounds.land.play()
     }
