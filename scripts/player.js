@@ -1,9 +1,9 @@
 import Phaser from 'phaser'
 
-const GRAVITY = 700
-const SPEED = 130
-const JUMP_SPEED = 350
-const BULLET_SPEED = 700
+const GRAVITY = 400
+const SPEED = 100
+const JUMP_SPEED = 210
+const BULLET_SPEED = 400
 const MUZZLE_OFFSET_Y = -22
 const FIRE_DURATION = 150
 const RECOIL = 0.05

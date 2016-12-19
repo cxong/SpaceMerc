@@ -12,9 +12,13 @@ export default class {
   update(cameraX) {
     if (this.nextSpawnX < cameraX + SCREEN_WIDTH / 2) {
       // Randomly place platforms
-      for (let x = this.nextSpawnX; x < this.nextSpawnX + SCREEN_WIDTH; x += 16) {
-        for (let y = 0; y < SCREEN_HEIGHT; y += 16) {
-          if (this.game.rnd.integerInRange(0, 10) < 1) {
+      let previousBlock = false
+      for (let y = 0; y < SCREEN_HEIGHT; y += 16) {
+        for (let x = this.nextSpawnX; x < this.nextSpawnX + SCREEN_WIDTH; x += 16) {
+          const roll = this.game.rnd.integerInRange(0, previousBlock ? 3 : 30)
+          const place = roll < 2
+          previousBlock = place
+          if (place) {
             const block = this.group.create(x, y, 'block')
             this.game.physics.enable(block, Phaser.Physics.ARCADE)
             block.body.immovable = true
