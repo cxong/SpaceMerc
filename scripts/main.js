@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from './graphics'
 import LocationSpawner from './location_spawner'
+import MapGen from './mapgen'
 import Music from './music'
 import Player from './player'
 import Wave from './wave'
@@ -28,6 +29,7 @@ export default class extends Phaser.State {
     this.groups = {
       ground: this.game.add.group(),
       bg: this.game.add.group(),
+      platforms: this.game.add.group(),
       enemies: this.game.add.group(),
       players: this.game.add.group(),
       enemyBullets: this.game.add.group(),
@@ -75,6 +77,7 @@ export default class extends Phaser.State {
     this.wave = new Wave(this.game, this.groups)
     // Enemies will be spawned automatically by wave
     this.locationSpawner = new LocationSpawner(this.game, this.groups)
+    this.mapgen = new MapGen(this.game, this.groups.platforms)
 
     // Initialise controls
     this.resetKeys();
@@ -118,6 +121,7 @@ export default class extends Phaser.State {
 
       // TODO: camera and update
       this.locationSpawner.update(0)
+      this.mapgen.update(0)
 
       // Move using arrow keys
       let dx = 0
@@ -155,6 +159,10 @@ export default class extends Phaser.State {
       'y', Phaser.Group.SORT_ASCENDING);
     this.groups.players.sort(
       'y', Phaser.Group.SORT_ASCENDING);
+
+    // Platforming
+    this.game.physics.arcade.collide(this.groups.players, this.groups.platforms)
+    this.game.physics.arcade.collide(this.groups.enemies, this.groups.platforms)
 
     // Player bullets to enemy
     this.game.physics.arcade.overlap(
