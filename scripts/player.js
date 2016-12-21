@@ -56,7 +56,24 @@ export default class extends Phaser.Sprite {
     } else {
       this.dir = dir
     }
-    // TODO: pose/animation
+    // Direction pose
+    if (dx === 0) {
+      if (dy === -1) {
+        this.upper.frame = 3
+      } else {
+        // TODO: crouching dy === 1
+        this.upper.frame = 0
+      }
+    } else {
+      if (dy === -1) {
+        this.upper.frame = 1
+      } else if (dy === 1) {
+        this.upper.frame = 2
+      } else {
+        this.upper.frame = 0
+      }
+    }
+    // Running
     if (dx === 0) {
       this.legs.animations.play('idle')
       this.body.velocity.x = 0;
