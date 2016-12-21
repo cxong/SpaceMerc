@@ -13,11 +13,15 @@ export default class extends Phaser.Sprite {
     super(game, x, y)
     group.add(this)
     game.physics.enable(this, Phaser.Physics.ARCADE)
+
     // Add body parts
-    const upper = this.addChild(game.add.sprite(0, -24, 'merc_upper'))
-    upper.anchor.setTo(0.5)
-    const legs = this.addChild(game.add.sprite(0, -8, 'merc_legs'))
-    legs.anchor.setTo(0.5)
+    this.upper = this.addChild(game.add.sprite(0, -24, 'merc_upper'))
+    this.upper.anchor.setTo(0.5)
+    this.legs = this.addChild(game.add.sprite(0, -8, 'merc_legs'))
+    this.legs.anchor.setTo(0.5)
+    this.legs.animations.add('idle', [0], 1, false)
+    this.legs.animations.add('run', [4, 5, 6, 7], 7, true)
+
     this.body.collideWorldBounds = true
     // Slightly smaller body
     this.body.setSize(10, 24, (32 - 10) / 2, 32 - 24);
@@ -29,19 +33,6 @@ export default class extends Phaser.Sprite {
 
     this.wasOnFloor = false
     this.fireCounter = 0
-    // animations
-    // TODO:
-    //this.animations.add('lasso', [0, 1, 2, 3], 20, false);
-    //this.animations.add('fire', [4, 5, 6, 7], 20, false);
-    /*this.animations.add(
-      'run_left', [8, 9, 10, 11], 20, true
-    );
-    this.animations.add(
-      'run_right', [12, 13, 14, 15], 20, true
-    );
-    this.animations.add('run', [16, 17, 18, 19], 10, true);
-    this.animations.add('idle', [24], 1, true);
-    this.animations.play('idle');*/
 
     this.invincibilityCounter = 0;
 
@@ -67,18 +58,12 @@ export default class extends Phaser.Sprite {
     }
     // TODO: pose/animation
     if (dx === 0) {
-      //this.animations.play('idle');
+      this.legs.animations.play('idle')
       this.body.velocity.x = 0;
     } else {
       this.body.velocity.x = dx * this.speed
       this.scale.x = dx > 0 ? 1 : -1
-      /*if (dx > 0) {
-        this.animations.play('run_right');
-      } else if (dx < 0) {
-        this.animations.play('run_left');
-      } else {
-        this.animations.play('run');
-      }*/
+      this.legs.animations.play('run')
     }
   }
 
