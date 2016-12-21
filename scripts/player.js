@@ -10,10 +10,15 @@ const RECOIL = 0.05
 
 export default class extends Phaser.Sprite {
   constructor(game, group, bulletGroup, x, y) {
-    super(game, x, y, 'merc');
-    group.add(this);
-    game.physics.enable(this, Phaser.Physics.ARCADE);
-    this.body.collideWorldBounds = true;
+    super(game, x, y)
+    group.add(this)
+    game.physics.enable(this, Phaser.Physics.ARCADE)
+    // Add body parts
+    const upper = this.addChild(game.add.sprite(0, -24, 'merc_upper'))
+    upper.anchor.setTo(0.5)
+    const legs = this.addChild(game.add.sprite(0, -8, 'merc_legs'))
+    legs.anchor.setTo(0.5)
+    this.body.collideWorldBounds = true
     // Slightly smaller body
     this.body.setSize(10, 24, (32 - 10) / 2, 32 - 24);
     this.anchor.setTo(0.5, 1)

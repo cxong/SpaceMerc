@@ -3,7 +3,8 @@ import { SCREEN_WIDTH, SCREEN_HEIGHT } from './graphics'
 
 const assets = {
   spritesheets: [
-    //['dialog', 320, 240],
+    ['merc_upper', 32, 32],
+    ['merc_legs', 24, 16]
   ],
   images: [
     'ground', 'bullet', 'robut', 'block'
