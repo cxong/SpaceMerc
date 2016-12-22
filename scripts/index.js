@@ -6,7 +6,11 @@ import GameState from './main'
 
 class Game extends Phaser.Game {
   constructor() {
-    super(SCREEN_WIDTH, SCREEN_HEIGHT, Phaser.AUTO, 'gameContainer', null)
+    const transparent = false
+    const antialias = false
+    super(
+      SCREEN_WIDTH, SCREEN_HEIGHT, Phaser.AUTO, 'gameContainer', null,
+      transparent, antialias)
     document.getElementById('fontLoader').style.display = 'none';
     this.state.add('Boot', BootState);
     this.state.add('Preload', PreloadState);

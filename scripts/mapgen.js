@@ -13,7 +13,7 @@ export default class {
     if (this.nextSpawnX < cameraX + SCREEN_WIDTH / 2) {
       // Randomly place platforms
       let previousBlock = false
-      for (let y = 0; y < SCREEN_HEIGHT; y += 16) {
+      for (let y = 0; y < SCREEN_HEIGHT - 16; y += 16) {
         for (let x = this.nextSpawnX; x < this.nextSpawnX + SCREEN_WIDTH; x += 16) {
           const roll = this.game.rnd.integerInRange(0, previousBlock ? 3 : 30)
           const place = roll < 2

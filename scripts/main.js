@@ -37,9 +37,13 @@ export default class extends Phaser.State {
       ui: this.game.add.group()
     };
 
-    /*const ground = this.game.add.tileSprite(
-      0, SCREEN_HEIGHT - 43, SCREEN_WIDTH, 43, 'ground');
-    this.groups.ground.add(ground);*/
+    const groundHeight = 35
+    this.ground = this.game.add.tileSprite(
+      0, SCREEN_HEIGHT - groundHeight, SCREEN_WIDTH, groundHeight, 'ground')
+    this.game.physics.enable(this.ground, Phaser.Physics.ARCADE)
+    this.ground.body.immovable = true
+    this.ground.body.setSize(this.ground.width, 16, 0, groundHeight - 16)
+    this.groups.ground.add(this.ground)
 
     this.text = this.game.add.text(
       SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, '', {
@@ -171,7 +175,15 @@ export default class extends Phaser.State {
         // Don't collide if jumping
         return player.body.velocity.y >= 0
       })
+    this.game.physics.arcade.collide(
+      this.groups.players, this.groups.ground, (player, ground) => {
+        player.onFloor = player.body.touching.down
+      }, (player, ground) => {
+        // Don't collide if jumping
+        return player.body.velocity.y >= 0
+      })
     this.game.physics.arcade.collide(this.groups.enemies, this.groups.platforms)
+    this.game.physics.arcade.collide(this.groups.enemies, this.groups.ground)
 
     // Player bullets to enemy
     this.game.physics.arcade.overlap(
@@ -231,5 +243,6 @@ export default class extends Phaser.State {
     if (this.player) {
       //this.game.debug.body(this.player)
     }
+    //this.game.debug.body(this.ground)
   }
 }

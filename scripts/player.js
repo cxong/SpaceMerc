@@ -28,7 +28,7 @@ export default class extends Phaser.Sprite {
 
     this.body.collideWorldBounds = true
     // Slightly smaller body
-    this.body.setSize(10, 24, (32 - 10) / 2, 32 - 24);
+    this.body.setSize(10, 24, (32 - 10) / 2, 32 - 24)
     this.anchor.setTo(0.5, 1)
     this.body.gravity.y = GRAVITY
     this.speed = SPEED
