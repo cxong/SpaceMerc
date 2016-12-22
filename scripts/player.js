@@ -9,6 +9,8 @@ const MUZZLE_OFFSET_X_UP = 3
 const MUZZLE_LENGTH = 16
 const FIRE_DURATION = 150
 const RECOIL = 0.05
+const UPPER_RECOIL_DURATION = 30
+const UPPER_Y = -24
 
 export default class extends Phaser.Sprite {
   constructor(game, group, bulletGroup, x, y) {
@@ -17,7 +19,7 @@ export default class extends Phaser.Sprite {
     game.physics.enable(this, Phaser.Physics.ARCADE)
 
     // Add body parts
-    this.upper = this.addChild(game.add.sprite(0, -24, 'merc_upper'))
+    this.upper = this.addChild(game.add.sprite(0, UPPER_Y, 'merc_upper'))
     this.upper.anchor.setTo(0.5)
     this.legs = this.addChild(game.add.sprite(0, -8, 'merc_legs'))
     this.legs.anchor.setTo(0.5)
@@ -35,6 +37,7 @@ export default class extends Phaser.Sprite {
 
     this.wasOnFloor = false
     this.fireCounter = 0
+    this.upperRecoilCounter = 0
 
     this.invincibilityCounter = 0;
 
@@ -109,6 +112,7 @@ export default class extends Phaser.Sprite {
     bullet.body.gravity.y = 0
     this.sounds.shoot.play()
     this.fireCounter = FIRE_DURATION
+    this.upperRecoilCounter = UPPER_RECOIL_DURATION
   }
 
   jump() {
@@ -133,6 +137,22 @@ export default class extends Phaser.Sprite {
     this.wasOnFloor = onFloor
     if (this.fireCounter > 0) {
       this.fireCounter -= this.game.time.physicsElapsedMS
+    }
+    if (this.upperRecoilCounter > 0) {
+      this.upperRecoilCounter -= this.game.time.physicsElapsedMS
+    }
+    this.upper.x = 0
+    this.upper.y = UPPER_Y
+    if (this.upperRecoilCounter > 0) {
+      // TODO: jumping
+      if (this.dir.x === 0) {
+        if (this.dir.y === -1) {
+          this.upper.y += 2
+        }
+        // TODO: crouching
+      } else {
+        this.upper.x += 2 * this.scale.x
+      }
     }
     if (this.invincibilityCounter > 0) {
       this.invincibilityCounter -= this.game.time.physicsElapsedMS
