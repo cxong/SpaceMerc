@@ -166,56 +166,60 @@ export default class extends Phaser.Sprite {
     this.legs.x = LEGS_X
     this.legs.y = LEGS_Y
 
-    if (!this.onFloor) {
-      return
-    }
-
     // Upper body
-    if (this.dir.x === 0) {
-      if (this.dir.y === -1) {
-        this.upper.frame = 3
-      } else if (this.dir.y === 1) {
-        this.upper.frame = 4
-        this.upper.x = UPPER_PRONE_X
-        this.upper.y = UPPER_PRONE_Y
+    if (!this.isJumping) {
+      this.upper.animations.stop()
+      if (this.dir.x === 0) {
+        if (this.dir.y === -1) {
+          this.upper.frame = 3
+        } else if (this.dir.y === 1) {
+          this.upper.frame = 4
+          this.upper.x = UPPER_PRONE_X
+          this.upper.y = UPPER_PRONE_Y
+        } else {
+          this.upper.frame = 0
+        }
       } else {
-        this.upper.frame = 0
+        if (this.dir.y === -1) {
+          this.upper.frame = 1
+        } else if (this.dir.y === 1) {
+          this.upper.frame = 2
+        } else {
+          this.upper.frame = 0
+        }
       }
-    } else {
-      if (this.dir.y === -1) {
-        this.upper.frame = 1
-      } else if (this.dir.y === 1) {
-        this.upper.frame = 2
-      } else {
-        this.upper.frame = 0
-      }
-    }
-    if (this.upperRecoilCounter > 0) {
-      // TODO: jumping
-      if (this.dir.x === 0 && this.dir.y === -1) {
-        this.upper.y += 2
-      } else {
-        this.upper.x += 2 * this.scale.x
+      if (this.upperRecoilCounter > 0) {
+        if (this.dir.x === 0 && this.dir.y === -1) {
+          this.upper.y += 2
+        } else {
+          this.upper.x += 2 * this.scale.x
+        }
       }
     }
 
     // Legs
-    if (this.moveX === 0) {
-      if (this.dir.y === 1) {
-        this.legs.animations.play('prone')
-        this.legs.x = LEGS_PRONE_X
-        this.legs.y = LEGS_PRONE_Y
+    if (this.onFloor) {
+      if (this.moveX === 0) {
+        if (this.dir.y === 1) {
+          this.legs.animations.play('prone')
+          this.legs.x = LEGS_PRONE_X
+          this.legs.y = LEGS_PRONE_Y
+        } else {
+          this.legs.animations.play('idle')
+        }
       } else {
-        this.legs.animations.play('idle')
+        this.legs.animations.play('run')
       }
-    } else {
-      this.legs.animations.play('run')
+    } else if (!this.isJumping) {
+      this.legs.frame = 6
     }
 
     // Body size
-    if (this.dir.x === 0 && this.dir.y === 1) {
+    if (this.onFloor && this.dir.x === 0 && this.dir.y === 1) {
+      // Prone size
       this.body.setSize(10, 14, (32 - 10) / 2, 32 - 14)
     } else {
+      // Normal size
       this.body.setSize(10, 28, (32 - 10) / 2, 32 - 28)
     }
   }
