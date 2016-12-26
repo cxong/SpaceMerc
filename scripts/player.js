@@ -72,7 +72,9 @@ export default class extends Phaser.Sprite {
     } else {
       this.dir = dir
     }
-    this.moveX = dx
+    if (this.onFloor || dx !== 0) {
+      this.moveX = dx
+    }
   }
 
   fire() {
