@@ -241,7 +241,7 @@ export default class extends Phaser.State {
 
   render() {
     if (this.player) {
-      //this.game.debug.body(this.player)
+      this.game.debug.body(this.player)
     }
     //this.game.debug.body(this.ground)
   }
