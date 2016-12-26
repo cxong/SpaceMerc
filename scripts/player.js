@@ -179,11 +179,8 @@ export default class extends Phaser.Sprite {
     }
     if (this.upperRecoilCounter > 0) {
       // TODO: jumping
-      if (this.dir.x === 0) {
-        if (this.dir.y === -1) {
-          this.upper.y += 2
-        }
-        // TODO: crouching
+      if (this.dir.x === 0 && this.dir.y === -1) {
+        this.upper.y += 2
       } else {
         this.upper.x += 2 * this.scale.x
       }
