@@ -207,9 +207,9 @@ export default class extends Phaser.Sprite {
 
     // Body size
     if (this.dir.x === 0 && this.dir.y === 1) {
-      this.body.setSize(10, 8, (32 - 10) / 2, 32 - 8)
+      this.body.setSize(10, 14, (32 - 10) / 2, 32 - 14)
     } else {
-      this.body.setSize(10, 24, (32 - 10) / 2, 32 - 24)
+      this.body.setSize(10, 28, (32 - 10) / 2, 32 - 28)
     }
   }
 }
