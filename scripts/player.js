@@ -6,6 +6,7 @@ const JUMP_SPEED = 210
 const BULLET_SPEED = 400
 const MUZZLE_OFFSET_Y = -22
 const MUZZLE_OFFSET_X_UP = 3
+const MUZZLE_OFFSET_Y_PRONE = -6
 const MUZZLE_LENGTH = 16
 const FIRE_DURATION = 150
 const RECOIL = 0.05
@@ -77,9 +78,12 @@ export default class extends Phaser.Sprite {
     }
     const muzzlePos = new Phaser.Point(this.x, this.y)
     const isFacingUp = this.dir.x === 0 && this.dir.y === -1
+    // TODO: jumping
+    const isProne = this.dir.x === 0 && this.dir.y === 1
     muzzlePos.add(
-      isFacingUp ? MUZZLE_OFFSET_X_UP * this.scale.x : 0, MUZZLE_OFFSET_Y)
-    const v = this.dir.clone().normalize()
+      isFacingUp ? MUZZLE_OFFSET_X_UP * this.scale.x : 0,
+      isProne ? MUZZLE_OFFSET_Y_PRONE : MUZZLE_OFFSET_Y)
+    const v = (isProne ? new Phaser.Point(this.scale.x, 0) : this.dir).clone().normalize()
     muzzlePos.add(v.x * MUZZLE_LENGTH, v.y * MUZZLE_LENGTH)
     const bullet = this.bulletGroup.create(muzzlePos.x, muzzlePos.y, 'bullet')
     this.game.physics.enable(bullet, Phaser.Physics.ARCADE)
