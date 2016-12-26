@@ -28,11 +28,13 @@ export default class extends Phaser.Sprite {
     // Add body parts
     this.upper = this.addChild(game.add.sprite(0, UPPER_Y, 'merc_upper'))
     this.upper.anchor.setTo(0.5)
+    this.upper.animations.add('jump', [5, 6, 7, 8], 10, true)
     this.legs = this.addChild(game.add.sprite(LEGS_X, LEGS_Y, 'merc_legs'))
     this.legs.anchor.setTo(0.5)
     this.legs.animations.add('idle', [0], 1, false)
     this.legs.animations.add('run', [4, 5, 6, 7], 7, true)
     this.legs.animations.add('prone', [8], 1, false)
+    this.legs.animations.add('jump', [1], 1, false)
 
     this.body.collideWorldBounds = true
     this.anchor.setTo(0.5, 1)
@@ -41,6 +43,7 @@ export default class extends Phaser.Sprite {
     this.dir = new Phaser.Point(1, 0)
     this.moveX = 0
     this.onFloor = false
+    this.isJumping = false
     this.setPose(0, 0)
 
     this.wasOnFloor = false
@@ -105,13 +108,12 @@ export default class extends Phaser.Sprite {
     if (!this.alive) {
       return;
     }
-    // TODO: animation
-    /*this.animations.play('jump');
-    this.body.velocity.setTo(0);
-    this.sounds.jump.play();*/
     if (this.body.onFloor() || this.onFloor) {
       this.body.velocity.y = -JUMP_SPEED
       this.sounds.jump.play()
+      this.upper.animations.play('jump')
+      this.legs.animations.play('jump')
+      this.isJumping = true
     }
   }
 
@@ -119,6 +121,7 @@ export default class extends Phaser.Sprite {
     const onFloor = this.body.onFloor() || this.onFloor
     if (onFloor && !this.wasOnFloor) {
       this.sounds.land.play()
+      this.isJumping = false
     }
     this.wasOnFloor = onFloor
     if (this.fireCounter > 0) {
@@ -159,6 +162,10 @@ export default class extends Phaser.Sprite {
   }
 
   setPose() {
+    if (!this.onFloor) {
+      return
+    }
+    
     // Upper body
     this.upper.x = 0
     this.upper.y = UPPER_Y
