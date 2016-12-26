@@ -81,8 +81,7 @@ export default class extends Phaser.Sprite {
     }
     const muzzlePos = new Phaser.Point(this.x, this.y)
     const isFacingUp = this.dir.x === 0 && this.dir.y === -1
-    // TODO: jumping
-    const isProne = this.dir.x === 0 && this.dir.y === 1
+    const isProne = this.onFloor && this.dir.x === 0 && this.dir.y === 1
     muzzlePos.add(
       isFacingUp ? MUZZLE_OFFSET_X_UP * this.scale.x : 0,
       isProne ? MUZZLE_OFFSET_Y_PRONE : MUZZLE_OFFSET_Y)
@@ -162,13 +161,16 @@ export default class extends Phaser.Sprite {
   }
 
   setPose() {
+    this.upper.x = 0
+    this.upper.y = UPPER_Y
+    this.legs.x = LEGS_X
+    this.legs.y = LEGS_Y
+
     if (!this.onFloor) {
       return
     }
-    
+
     // Upper body
-    this.upper.x = 0
-    this.upper.y = UPPER_Y
     if (this.dir.x === 0) {
       if (this.dir.y === -1) {
         this.upper.frame = 3
@@ -198,8 +200,6 @@ export default class extends Phaser.Sprite {
     }
 
     // Legs
-    this.legs.x = LEGS_X
-    this.legs.y = LEGS_Y
     if (this.moveX === 0) {
       if (this.dir.y === 1) {
         this.legs.animations.play('prone')
