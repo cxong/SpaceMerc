@@ -16,7 +16,7 @@ export default class {
     }
     this.music = this.musics[name]
     if (!this.music.isPlaying) {
-      this.music.play('', 0, 0)
+      this.music.play('', 0, 0, true)
     }
     this.game.add.tween(this.music).to({volume: VOLUME}).start()
   }
