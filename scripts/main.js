@@ -167,20 +167,22 @@ export default class extends Phaser.State {
     // Platforming
     this.groups.players.forEach((player) => {
       player.onFloor = false
+      player.isOnPlatform = false
     })
     this.game.physics.arcade.collide(
       this.groups.players, this.groups.platforms, (player, platform) => {
-        player.onFloor = player.body.touching.down
+        player.onFloor = player.onFloor || player.body.touching.down
+        player.isOnPlatform = player.body.touching.down
       }, (player, platform) => {
-        // Don't collide if jumping
-        return player.body.velocity.y >= 0
+        // Don't collide if jumping or just falling through platform
+        return player.body.velocity.y > 0 && player.jumpDownCounter <= 0
       })
     this.game.physics.arcade.collide(
       this.groups.players, this.groups.ground, (player, ground) => {
-        player.onFloor = player.body.touching.down
+        player.onFloor = player.onFloor || player.body.touching.down
       }, (player, ground) => {
         // Don't collide if jumping
-        return player.body.velocity.y >= 0
+        return player.body.velocity.y > 0
       })
     this.game.physics.arcade.collide(this.groups.enemies, this.groups.platforms)
     this.game.physics.arcade.collide(this.groups.enemies, this.groups.ground)

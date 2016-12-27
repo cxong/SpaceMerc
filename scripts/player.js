@@ -4,6 +4,7 @@ const GRAVITY = 400
 const SPEED = 100
 const JUMP_SPEED = 210
 const BULLET_SPEED = 400
+const JUMP_DOWN_DURATION = 200
 const MUZZLE_OFFSET_Y = -22
 const MUZZLE_OFFSET_X_UP = 3
 const MUZZLE_OFFSET_Y_PRONE = -6
@@ -35,6 +36,7 @@ export default class extends Phaser.Sprite {
     this.legs.animations.add('run', [4, 5, 6, 7], 7, true)
     this.legs.animations.add('prone', [8], 1, false)
     this.legs.animations.add('jump', [1], 1, false)
+    this.legs.animations.add('fall', [6], 1, false)
 
     this.body.collideWorldBounds = true
     this.anchor.setTo(0.5, 1)
@@ -44,13 +46,15 @@ export default class extends Phaser.Sprite {
     this.moveX = 0
     this.onFloor = false
     this.isJumping = false
+    this.isOnPlatform = false
     this.setPose(0, 0)
 
     this.wasOnFloor = false
     this.fireCounter = 0
     this.upperRecoilCounter = 0
+    this.jumpDownCounter = 0
 
-    this.invincibilityCounter = 0;
+    this.invincibilityCounter = 0
 
     this.sounds = {
       jump: game.add.audio('jump'),
@@ -112,11 +116,16 @@ export default class extends Phaser.Sprite {
       return;
     }
     if (this.body.onFloor() || this.onFloor) {
-      this.body.velocity.y = -JUMP_SPEED
       this.sounds.jump.play()
-      this.upper.animations.play('jump')
-      this.legs.animations.play('jump')
-      this.isJumping = true
+      if (this.dir.y === 1 && this.isOnPlatform) {
+        // Jump below platform
+        this.jumpDownCounter = JUMP_DOWN_DURATION
+      } else {
+        this.body.velocity.y = -JUMP_SPEED
+        this.upper.animations.play('jump')
+        this.legs.animations.play('jump')
+        this.isJumping = true
+      }
     }
   }
 
@@ -127,12 +136,18 @@ export default class extends Phaser.Sprite {
       this.isJumping = false
     }
     this.wasOnFloor = onFloor
+
+    // Update counters
     if (this.fireCounter > 0) {
       this.fireCounter -= this.game.time.physicsElapsedMS
     }
     if (this.upperRecoilCounter > 0) {
       this.upperRecoilCounter -= this.game.time.physicsElapsedMS
     }
+    if (this.jumpDownCounter > 0) {
+      this.jumpDownCounter -= this.game.time.physicsElapsedMS
+    }
+
     // Running
     if (this.moveX === 0) {
       this.body.velocity.x = 0
@@ -226,7 +241,7 @@ export default class extends Phaser.Sprite {
         this.legs.animations.play('run')
       }
     } else if (!this.isJumping) {
-      this.legs.frame = 6
+      this.legs.animations.play('fall')
     }
 
     // Body size
