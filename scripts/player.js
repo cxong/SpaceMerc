@@ -28,7 +28,7 @@ export default class extends Phaser.Sprite {
     // Add body parts
     this.upper = this.addChild(game.add.sprite(0, UPPER_Y, 'merc_upper'))
     this.upper.anchor.setTo(0.5)
-    this.upper.animations.add('jump', [5, 6, 7, 8], 10, true)
+    this.upper.animations.add('jump', [6, 7, 8, 9], 10, true)
     this.legs = this.addChild(game.add.sprite(LEGS_X, LEGS_Y, 'merc_legs'))
     this.legs.anchor.setTo(0.5)
     this.legs.animations.add('idle', [0], 1, false)
@@ -83,9 +83,11 @@ export default class extends Phaser.Sprite {
     }
     const muzzlePos = new Phaser.Point(this.x, this.y)
     const isFacingUp = this.dir.x === 0 && this.dir.y === -1
+    const isFalling = !this.onFloor && !this.isJumping
+    const isFacingDown = this.dir.x === 0 && this.dir.y === 1 && isFalling
     const isProne = this.onFloor && this.dir.x === 0 && this.dir.y === 1
     muzzlePos.add(
-      isFacingUp ? MUZZLE_OFFSET_X_UP * this.scale.x : 0,
+      (isFacingUp || isFacingDown) ? MUZZLE_OFFSET_X_UP * this.scale.x : 0,
       isProne ? MUZZLE_OFFSET_Y_PRONE : MUZZLE_OFFSET_Y)
     const v = (isProne ? new Phaser.Point(this.scale.x, 0) : this.dir).clone().normalize()
     muzzlePos.add(v.x * MUZZLE_LENGTH, v.y * MUZZLE_LENGTH)
@@ -175,9 +177,13 @@ export default class extends Phaser.Sprite {
         if (this.dir.y === -1) {
           this.upper.frame = 3
         } else if (this.dir.y === 1) {
-          this.upper.frame = 4
-          this.upper.x = UPPER_PRONE_X
-          this.upper.y = UPPER_PRONE_Y
+          if (this.onFloor) {
+            this.upper.frame = 4
+            this.upper.x = UPPER_PRONE_X
+            this.upper.y = UPPER_PRONE_Y
+          } else {
+            this.upper.frame = 5
+          }
         } else {
           this.upper.frame = 0
         }
@@ -190,9 +196,16 @@ export default class extends Phaser.Sprite {
           this.upper.frame = 0
         }
       }
+
+      // Recoil
       if (this.upperRecoilCounter > 0) {
         if (this.dir.x === 0 && this.dir.y === -1) {
+          // Firing up, recoil down
           this.upper.y += 2
+        } else if (this.dir.x === 0 && this.dir.y === 1 &&
+          !this.onFloor && !this.isJumping){
+          // Firing down, falling
+          this.upper.y -= 2
         } else {
           this.upper.x += 2 * this.scale.x
         }
