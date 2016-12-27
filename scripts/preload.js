@@ -4,10 +4,11 @@ import { SCREEN_WIDTH, SCREEN_HEIGHT } from './graphics'
 const assets = {
   spritesheets: [
     ['merc_upper', 32, 36],
-    ['merc_legs', 24, 16]
+    ['merc_legs', 24, 16],
+    ['block', 16, 16]
   ],
   images: [
-    'ground', 'bullet', 'robut', 'block'
+    'ground', 'bullet', 'robut'
   ],
   sounds: [
     'catch', 'die', 'hit', 'land', 'jump',

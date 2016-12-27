@@ -14,6 +14,9 @@ export default class extends Phaser.State {
   create() {
     this.game.stage.backgroundColor = 0x4f3458;
 
+    this.game.world.width = 8000
+    this.game.camera.bounds.width = 8000
+
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
     this.sounds = {
@@ -103,7 +106,7 @@ export default class extends Phaser.State {
       this.game,
       this.groups.players, this.groups.playerBullets,
       SCREEN_WIDTH / 2, SCREEN_HEIGHT - 50, []);
-    this.sounds.respawn.play();
+    this.sounds.respawn.play()
   }
 
   gameEnd() {
@@ -123,7 +126,17 @@ export default class extends Phaser.State {
         this.text.alpha = 0;
       }
 
-      // TODO: camera and update
+      let positionSum = new Phaser.Point(0, 0)
+      let playerCount = 0
+      this.groups.players.forEach((player) => {
+        positionSum.add(player.x, player.y)
+        playerCount++
+      })
+      if (playerCount > 0) {
+        this.game.camera.focusOnXY(
+          Math.round(positionSum.x / playerCount),
+          Math.round(positionSum.y / playerCount))
+      }
       this.locationSpawner.update(0)
       this.mapgen.update(0)
 
@@ -221,6 +234,10 @@ export default class extends Phaser.State {
       this.setText('Wave ' + this.wave.wave);
       // TODO: some sort of incidental music
     }
+
+    if (this.player) {
+      this.game.camera.follow(this.player)
+    }
   }
 
   setText(text) {
@@ -244,6 +261,8 @@ export default class extends Phaser.State {
   render() {
     if (this.player) {
       //this.game.debug.body(this.player)
+      //this.game.debug.cameraInfo(this.game.camera, 32, 32)
+      //this.game.debug.spriteCoords(this.player, 32, 150)
     }
   }
 }
