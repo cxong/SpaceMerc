@@ -17,6 +17,7 @@ export default class extends Phaser.State {
     this.game.stage.backgroundColor = 0x4f3458;
 
     this.game.world.width = WORLD_WIDTH
+    this.game.physics.setBoundsToWorld()
     this.camera = new Camera(this.game.camera)
 
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -122,9 +123,33 @@ export default class extends Phaser.State {
       }
 
       this.camera.followPlayers(this.groups.players)
+      this.game.world.bounds.x = this.game.camera.x
       this.locationSpawner.update(this.game.camera.x)
       this.mapgen.update(this.game.camera.x)
       this.groundGen.update(this.game.camera.x)
+
+      // Destroy stuff that's too far to the left
+      const destroyToTheLeft = (group) => {
+        group.forEach((sprite) => {
+          if (sprite.x + sprite.width < this.game.camera.x) {
+            sprite.destroy()
+          }
+        })
+      }
+      destroyToTheLeft(this.groups.enemies)
+      destroyToTheLeft(this.groups.platforms)
+      destroyToTheLeft(this.groups.ground)
+
+      // Destroy bullets that are off-camera
+      const destroyBulletsOffCamera = (group) => {
+        group.forEach((bullet) => {
+          if (!this.game.camera.bounds.intersects(bullet.body)) {
+            bullet.destroy()
+          }
+        })
+      }
+      destroyBulletsOffCamera(this.groups.enemyBullets)
+      destroyBulletsOffCamera(this.groups.playerBullets)
 
       // Move using arrow keys
       let dx = 0
@@ -246,5 +271,6 @@ export default class extends Phaser.State {
       //this.game.debug.cameraInfo(this.game.camera, 32, 32)
       //this.game.debug.spriteCoords(this.player, 32, 150)
     }
+    this.game.debug.text(this.groups.platforms.total, 100, 100)
   }
 }
