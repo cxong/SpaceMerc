@@ -123,7 +123,6 @@ export default class extends Phaser.State {
       }
 
       this.camera.followPlayers(this.groups.players)
-      this.game.world.bounds.x = this.game.camera.x
       this.locationSpawner.update(this.game.camera.x)
       this.mapgen.update(this.game.camera.x)
       this.groundGen.update(this.game.camera.x)
@@ -143,7 +142,7 @@ export default class extends Phaser.State {
       // Destroy bullets that are off-camera
       const destroyBulletsOffCamera = (group) => {
         group.forEach((bullet) => {
-          if (!this.game.camera.bounds.intersects(bullet.body)) {
+          if (!this.game.camera.view.intersects(bullet.body)) {
             bullet.destroy()
           }
         })
@@ -271,6 +270,6 @@ export default class extends Phaser.State {
       //this.game.debug.cameraInfo(this.game.camera, 32, 32)
       //this.game.debug.spriteCoords(this.player, 32, 150)
     }
-    this.game.debug.text(this.groups.platforms.total, 100, 100)
+    this.game.debug.text(this.groups.playerBullets.total, 100, 100)
   }
 }
