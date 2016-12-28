@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
-import { SCREEN_WIDTH, SCREEN_HEIGHT } from './graphics'
+import { SCREEN_WIDTH, SCREEN_HEIGHT, WORLD_WIDTH } from './graphics'
+import Camera from './camera'
 import GroundGen from './ground'
 import LocationSpawner from './location_spawner'
 import MapGen from './mapgen'
@@ -15,8 +16,8 @@ export default class extends Phaser.State {
   create() {
     this.game.stage.backgroundColor = 0x4f3458;
 
-    this.game.world.width = 8000
-    this.game.camera.bounds.width = 8000
+    this.game.world.width = WORLD_WIDTH
+    this.camera = new Camera(this.game.camera)
 
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -120,17 +121,7 @@ export default class extends Phaser.State {
         this.text.alpha = 0;
       }
 
-      let positionSum = new Phaser.Point(0, 0)
-      let playerCount = 0
-      this.groups.players.forEach((player) => {
-        positionSum.add(player.x, player.y)
-        playerCount++
-      })
-      if (playerCount > 0) {
-        this.game.camera.focusOnXY(
-          Math.round(positionSum.x / playerCount),
-          Math.round(positionSum.y / playerCount))
-      }
+      this.camera.followPlayers(this.groups.players)
       this.locationSpawner.update(this.game.camera.x)
       this.mapgen.update(this.game.camera.x)
       this.groundGen.update(this.game.camera.x)
@@ -229,10 +220,6 @@ export default class extends Phaser.State {
       this.setText('Wave ' + this.wave.wave);
       // TODO: some sort of incidental music
     }*/
-
-    if (this.player) {
-      this.game.camera.follow(this.player)
-    }
   }
 
   setText(text) {
@@ -256,7 +243,7 @@ export default class extends Phaser.State {
   render() {
     if (this.player) {
       //this.game.debug.body(this.player)
-      this.game.debug.cameraInfo(this.game.camera, 32, 32)
+      //this.game.debug.cameraInfo(this.game.camera, 32, 32)
       //this.game.debug.spriteCoords(this.player, 32, 150)
     }
   }

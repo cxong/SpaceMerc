@@ -1,5 +1,6 @@
 const SCREEN_WIDTH = 400
 const SCREEN_HEIGHT = 240
+const WORLD_WIDTH = SCREEN_WIDTH * 20
 
 // http://stackoverflow.com/a/9071606/2038264
 function choose(choices) {
