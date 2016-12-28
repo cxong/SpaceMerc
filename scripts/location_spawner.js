@@ -13,7 +13,7 @@ export default class {
   }
 
   update(cameraX) {
-    if (this.nextSpawnX < cameraX + SCREEN_WIDTH / 2) {
+    if (this.nextSpawnX < cameraX + SCREEN_WIDTH) {
       // Generate new positions for enemies
       const positions = []
       const minX = this.nextSpawnX + MIN_INTERVAL

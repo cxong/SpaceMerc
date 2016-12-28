@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from './graphics'
+import GroundGen from './ground'
 import LocationSpawner from './location_spawner'
 import MapGen from './mapgen'
 import Music from './music'
@@ -40,14 +41,6 @@ export default class extends Phaser.State {
       ui: this.game.add.group()
     };
 
-    const groundHeight = 35
-    this.ground = this.game.add.tileSprite(
-      0, SCREEN_HEIGHT - groundHeight, SCREEN_WIDTH, groundHeight, 'ground')
-    this.game.physics.enable(this.ground, Phaser.Physics.ARCADE)
-    this.ground.body.immovable = true
-    this.ground.body.setSize(this.ground.width, 16, 0, groundHeight - 16)
-    this.groups.ground.add(this.ground)
-
     this.text = this.game.add.text(
       SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, '', {
         font: '36px VT323', fill: '#fff', align: 'center'
@@ -85,6 +78,7 @@ export default class extends Phaser.State {
     // Enemies will be spawned automatically by wave
     this.locationSpawner = new LocationSpawner(this.game, this.groups)
     this.mapgen = new MapGen(this.game, this.groups.platforms)
+    this.groundGen = new GroundGen(this.game, this.groups.ground)
 
     // Initialise controls
     this.resetKeys();
@@ -137,8 +131,9 @@ export default class extends Phaser.State {
           Math.round(positionSum.x / playerCount),
           Math.round(positionSum.y / playerCount))
       }
-      this.locationSpawner.update(0)
-      this.mapgen.update(0)
+      this.locationSpawner.update(this.game.camera.x)
+      this.mapgen.update(this.game.camera.x)
+      this.groundGen.update(this.game.camera.x)
 
       // Move using arrow keys
       let dx = 0
@@ -227,13 +222,13 @@ export default class extends Phaser.State {
     // Enemy spawning
     // Note: spawn next wave if less than half wave
     // remaining
-    if (this.wave &&
+    /*if (this.wave &&
       this.groups.enemies.countLiving() < this.wave.waveTotal() / 2) {
       this.wave.wave++;
       this.wave.spawn();
       this.setText('Wave ' + this.wave.wave);
       // TODO: some sort of incidental music
-    }
+    }*/
 
     if (this.player) {
       this.game.camera.follow(this.player)
@@ -261,7 +256,7 @@ export default class extends Phaser.State {
   render() {
     if (this.player) {
       //this.game.debug.body(this.player)
-      //this.game.debug.cameraInfo(this.game.camera, 32, 32)
+      this.game.debug.cameraInfo(this.game.camera, 32, 32)
       //this.game.debug.spriteCoords(this.player, 32, 150)
     }
   }

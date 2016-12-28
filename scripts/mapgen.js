@@ -10,7 +10,7 @@ export default class {
   }
 
   update(cameraX) {
-    if (this.nextSpawnX < cameraX + SCREEN_WIDTH / 2) {
+    if (this.nextSpawnX < cameraX + SCREEN_WIDTH) {
       // Randomly place platforms
       for (let y = 0; y < SCREEN_HEIGHT - 16; y += 16) {
         for (let x = this.nextSpawnX; x < this.nextSpawnX + SCREEN_WIDTH; x += 16) {
