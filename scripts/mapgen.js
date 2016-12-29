@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { SCREEN_WIDTH, SCREEN_HEIGHT } from './graphics'
+import { SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE } from './graphics'
 
 // Create platforms randomly across map
 export default class {
@@ -12,11 +12,23 @@ export default class {
   update(cameraX) {
     if (this.nextSpawnX < cameraX + SCREEN_WIDTH) {
       // Randomly place platforms
-      for (let y = 0; y < SCREEN_HEIGHT - 16; y += 16) {
-        for (let x = this.nextSpawnX; x < this.nextSpawnX + SCREEN_WIDTH; x += 16) {
+      // Leave top two rows empty
+      for (let y = TILE_SIZE * 2;
+          // Leave bottom row empty
+          y < SCREEN_HEIGHT - TILE_SIZE;
+          y += TILE_SIZE) {
+        for (let x = this.nextSpawnX;
+            x < this.nextSpawnX + SCREEN_WIDTH;
+            x += TILE_SIZE) {
+          // Check if current location and location to the left are empty
+          let locationsEmpty = true
+          this.game.physics.arcade.getObjectsAtLocation(
+            x, y, this.group, () => { locationsEmpty = false })
+          this.game.physics.arcade.getObjectsAtLocation(
+            x - TILE_SIZE, y, this.group, () => { locationsEmpty = false })
           const roll = this.game.rnd.integerInRange(0, 30)
           const place = roll < 2
-          if (place) {
+          if (place && locationsEmpty) {
             const width = this.game.rnd.integerInRange(2, 15)
             for (let i = 0; i < width; i++, x += 16) {
               const block = this.group.create(x, y, 'block')
