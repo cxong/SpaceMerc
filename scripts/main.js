@@ -123,6 +123,8 @@ export default class extends Phaser.State {
       }
 
       this.camera.followPlayers(this.groups.players)
+      this.game.world.setBounds(
+        this.game.camera.x, 0, WORLD_WIDTH - this.game.camera.x, SCREEN_HEIGHT)
       this.locationSpawner.update(this.game.camera.x)
       this.mapgen.update(this.game.camera.x)
       this.groundGen.update(this.game.camera.x)
@@ -189,12 +191,13 @@ export default class extends Phaser.State {
 
     // Platforming
     this.groups.players.forEach((player) => {
-      player.onFloor = false
       player.isOnPlatform = false
     })
     this.game.physics.arcade.collide(
       this.groups.players, this.groups.platforms, (player, platform) => {
-        player.onFloor = player.onFloor || player.body.touching.down
+        if (player.body.touching.down) {
+          player.touchFloor()
+        }
         player.isOnPlatform = player.body.touching.down
       }, (player, platform) => {
         // Don't collide if jumping or just falling through platform
@@ -202,7 +205,9 @@ export default class extends Phaser.State {
       })
     this.game.physics.arcade.collide(
       this.groups.players, this.groups.ground, (player, ground) => {
-        player.onFloor = player.onFloor || player.body.touching.down
+        if (player.body.touching.down) {
+          player.touchFloor()
+        }
       }, (player, ground) => {
         // Don't collide if jumping
         return player.body.velocity.y > 0
@@ -270,6 +275,6 @@ export default class extends Phaser.State {
       //this.game.debug.cameraInfo(this.game.camera, 32, 32)
       //this.game.debug.spriteCoords(this.player, 32, 150)
     }
-    this.game.debug.text(this.groups.playerBullets.total, 100, 100)
+    //this.game.debug.text(this.groups.playerBullets.total, 100, 100)
   }
 }

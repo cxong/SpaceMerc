@@ -1,8 +1,11 @@
 import Phaser from 'phaser'
+import { TILE_SIZE } from './graphics'
 
-const GRAVITY = 400
-const SPEED = 100
-const JUMP_SPEED = 210
+const JUMP_DURATION_S = 0.4
+const JUMP_HEIGHT = TILE_SIZE * 3.5
+const SPEED = 80
+const GRAVITY = 2 * JUMP_HEIGHT / (JUMP_DURATION_S * JUMP_DURATION_S)
+const JUMP_SPEED = 2 * JUMP_HEIGHT / JUMP_DURATION_S
 const BULLET_SPEED = 400
 const JUMP_DOWN_DURATION = 200
 const MUZZLE_OFFSET_Y = -22
@@ -19,6 +22,7 @@ const LEGS_X = 0
 const LEGS_Y = -8
 const LEGS_PRONE_X = -6
 const LEGS_PRONE_Y = -8
+const JUMP_GRACE_DURATION = 100
 
 export default class extends Phaser.Sprite {
   constructor(game, group, bulletGroup, x, y) {
@@ -44,7 +48,6 @@ export default class extends Phaser.Sprite {
     this.speed = SPEED
     this.dir = new Phaser.Point(1, 0)
     this.moveX = 0
-    this.onFloor = false
     this.isJumping = false
     this.isOnPlatform = false
     this.setPose(0, 0)
@@ -53,6 +56,7 @@ export default class extends Phaser.Sprite {
     this.fireCounter = 0
     this.upperRecoilCounter = 0
     this.jumpDownCounter = 0
+    this.onFloorCounter = 0
 
     this.invincibilityCounter = 0
 
@@ -76,7 +80,7 @@ export default class extends Phaser.Sprite {
     } else {
       this.dir = dir
     }
-    if (this.onFloor || dx !== 0) {
+    if (this.isOnFloor() || dx !== 0) {
       this.moveX = dx
     }
   }
@@ -87,9 +91,9 @@ export default class extends Phaser.Sprite {
     }
     const muzzlePos = new Phaser.Point(this.x, this.y)
     const isFacingUp = this.dir.x === 0 && this.dir.y === -1
-    const isFalling = !this.onFloor && !this.isJumping
+    const isFalling = !this.isOnFloor() && !this.isJumping
     const isFacingDown = this.dir.x === 0 && this.dir.y === 1 && isFalling
-    const isProne = this.onFloor && this.dir.x === 0 && this.dir.y === 1
+    const isProne = this.isOnFloor() && this.dir.x === 0 && this.dir.y === 1
     muzzlePos.add(
       (isFacingUp || isFacingDown) ? MUZZLE_OFFSET_X_UP * this.scale.x : 0,
       isProne ? MUZZLE_OFFSET_Y_PRONE : MUZZLE_OFFSET_Y)
@@ -115,8 +119,9 @@ export default class extends Phaser.Sprite {
     if (!this.alive) {
       return;
     }
-    if (this.body.onFloor() || this.onFloor) {
+    if (this.body.onFloor() || this.isOnFloor()) {
       this.sounds.jump.play()
+      this.onFloorCounter = 0
       if (this.dir.y === 1 && this.isOnPlatform) {
         // Jump below platform
         this.jumpDownCounter = JUMP_DOWN_DURATION
@@ -130,7 +135,7 @@ export default class extends Phaser.Sprite {
   }
 
   update() {
-    const onFloor = this.body.onFloor() || this.onFloor
+    const onFloor = this.body.onFloor() || this.isOnFloor()
     if (onFloor && !this.wasOnFloor) {
       this.sounds.land.play()
       this.isJumping = false
@@ -146,6 +151,9 @@ export default class extends Phaser.Sprite {
     }
     if (this.jumpDownCounter > 0) {
       this.jumpDownCounter -= this.game.time.physicsElapsedMS
+    }
+    if (this.onFloorCounter > 0) {
+      this.onFloorCounter -= this.game.time.physicsElapsedMS
     }
 
     // Running
@@ -192,7 +200,7 @@ export default class extends Phaser.Sprite {
         if (this.dir.y === -1) {
           this.upper.frame = 3
         } else if (this.dir.y === 1) {
-          if (this.onFloor) {
+          if (this.isOnFloor()) {
             this.upper.frame = 4
             this.upper.x = UPPER_PRONE_X
             this.upper.y = UPPER_PRONE_Y
@@ -218,7 +226,7 @@ export default class extends Phaser.Sprite {
           // Firing up, recoil down
           this.upper.y += 2
         } else if (this.dir.x === 0 && this.dir.y === 1 &&
-          !this.onFloor && !this.isJumping){
+          !this.isOnFloor() && !this.isJumping){
           // Firing down, falling
           this.upper.y -= 2
         } else {
@@ -228,7 +236,7 @@ export default class extends Phaser.Sprite {
     }
 
     // Legs
-    if (this.onFloor) {
+    if (this.isOnFloor()) {
       if (this.moveX === 0) {
         if (this.dir.y === 1) {
           this.legs.animations.play('prone')
@@ -245,12 +253,20 @@ export default class extends Phaser.Sprite {
     }
 
     // Body size
-    if (this.onFloor && this.dir.x === 0 && this.dir.y === 1) {
+    if (this.isOnFloor() && this.dir.x === 0 && this.dir.y === 1) {
       // Prone size
       this.body.setSize(10, 14, (32 - 10) / 2, 32 - 14)
     } else {
       // Normal size
       this.body.setSize(10, 28, (32 - 10) / 2, 32 - 28)
     }
+  }
+
+  isOnFloor() {
+    return this.onFloorCounter > 0
+  }
+
+  touchFloor() {
+    this.onFloorCounter = JUMP_GRACE_DURATION
   }
 }
