@@ -29,15 +29,19 @@ export default class {
           const roll = this.game.rnd.integerInRange(0, 30)
           const place = roll < 2
           if (place && locationsEmpty) {
-            const width = this.game.rnd.integerInRange(2, 15)
+            const width = this.game.rnd.integerInRange(1, 15)
+            const style = this.game.rnd.integerInRange(0, 8)
             for (let i = 0; i < width; i++, x += 16) {
               const block = this.group.create(x, y, 'block')
+              block.frame = style * 4
               if (i === 0) {
-                block.frame = 0
+                if (width > 1) {
+                  block.frame += 1
+                }
               } else if (i === width - 1) {
-                block.frame = 2
+                block.frame += 3
               } else {
-                block.frame = 1
+                block.frame += 2
               }
               this.game.physics.enable(block, Phaser.Physics.ARCADE)
               block.body.immovable = true
