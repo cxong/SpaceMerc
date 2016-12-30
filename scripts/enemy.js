@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
 
 const GRAVITY = 400
-const SPEED = 130
+const SPEED = 40
 const JUMP_SPEED = 350
 
 export default class extends Phaser.Sprite {
@@ -24,6 +24,8 @@ export default class extends Phaser.Sprite {
 
     this.game = game;
     this.bulletGroup = bulletGroup;
+    this.state = 'roam'
+    this.moveX = this.game.rnd.pick([-1, 1])
   }
 
   move(dx) {
@@ -89,7 +91,12 @@ export default class extends Phaser.Sprite {
     if (this.fireCounter > 0) {
       this.fireCounter -= this.game.time.physicsElapsedMS
     }
-    // TODO: kill if too far to the left of screen
+    switch (this.state) {
+      case 'roam':
+        this.body.velocity.x = this.moveX * SPEED
+        this.scale.x = this.moveX > 0 ? 1 : -1
+        break
+    }
   }
 
   killAndLeaveCorpse() {

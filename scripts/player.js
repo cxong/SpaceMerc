@@ -45,7 +45,6 @@ export default class extends Phaser.Sprite {
     this.body.collideWorldBounds = true
     this.anchor.setTo(0.5, 1)
     this.body.gravity.y = GRAVITY
-    this.speed = SPEED
     this.dir = new Phaser.Point(1, 0)
     this.moveX = 0
     this.isJumping = false
@@ -160,7 +159,7 @@ export default class extends Phaser.Sprite {
     if (this.moveX === 0) {
       this.body.velocity.x = 0
     } else {
-      this.body.velocity.x = this.moveX * this.speed
+      this.body.velocity.x = this.moveX * SPEED
       this.scale.x = this.moveX > 0 ? 1 : -1
     }
     this.setPose()
