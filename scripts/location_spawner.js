@@ -20,7 +20,7 @@ export default class {
       const minX = this.nextSpawnX + MIN_INTERVAL
       const maxX = this.nextSpawnX + SCREEN_WIDTH - MIN_INTERVAL
       for (let i = 0; i < 3; i++) {
-        positions.push(minX + this.game.rnd.frac() * (maxX - minX))
+        positions.push(this.game.rnd.realInRange(minX, maxX))
       }
       // Leave minimal gaps between random positions
       for (let j = 0; j < 100; j++) {

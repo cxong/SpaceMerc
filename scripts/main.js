@@ -6,6 +6,7 @@ import LocationSpawner from './location_spawner'
 import MapGen from './mapgen'
 import Music from './music'
 import Player from './player'
+import ScreenSpawner from './screen_spawner'
 import Wave from './wave'
 
 export default class extends Phaser.State {
@@ -79,6 +80,7 @@ export default class extends Phaser.State {
     this.wave = new Wave(this.game, this.groups)
     // Enemies will be spawned automatically by wave
     this.locationSpawner = new LocationSpawner(this.game, this.groups)
+    this.screenSpawner = new ScreenSpawner(this.game, this.groups)
     this.mapgen = new MapGen(this.game, this.groups.platforms)
     this.groundGen = new GroundGen(this.game, this.groups.ground)
 
@@ -126,13 +128,14 @@ export default class extends Phaser.State {
       this.game.world.setBounds(
         this.game.camera.x, 0, WORLD_WIDTH - this.game.camera.x, SCREEN_HEIGHT)
       this.locationSpawner.update(this.game.camera.x)
+      this.screenSpawner.update(this.game.camera.x)
       this.mapgen.update(this.game.camera.x)
       this.groundGen.update(this.game.camera.x)
 
       // Destroy stuff that's too far to the left
       const destroyToTheLeft = (group) => {
         group.forEach((sprite) => {
-          if (sprite.x + sprite.width < this.game.camera.x) {
+          if (sprite.x + sprite.width < this.game.camera.x - SCREEN_WIDTH) {
             sprite.destroy()
           }
         })

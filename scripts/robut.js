@@ -3,7 +3,7 @@ import Character from './character'
 
 const JUMP_DURATION_S = 0.7
 const JUMP_HEIGHT = TILE_SIZE * 2.5
-const SPEED = 40
+const SPEED = 85
 
 export default class extends Character {
   constructor(game, group, bulletGroup, x, y) {
