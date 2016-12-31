@@ -33,7 +33,7 @@ export default class extends Character {
       case 'roam':
         this.move(this.moveX, 0)
         // Jump as soon as we reach the end of a platform
-        if (this.onFloorCounter > 0) {
+        if (this.body.velocity.y > 0) {
           this.jump()
         }
         break
