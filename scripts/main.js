@@ -190,30 +190,8 @@ export default class extends Phaser.State {
       'y', Phaser.Group.SORT_ASCENDING);
 
     // Platforming
-    this.groups.players.forEach((player) => {
-      player.isOnPlatform = false
-    })
-    this.game.physics.arcade.collide(
-      this.groups.players, this.groups.platforms, (player, platform) => {
-        if (player.body.touching.down) {
-          player.touchFloor()
-        }
-        player.isOnPlatform = player.body.touching.down
-      }, (player, platform) => {
-        // Don't collide if jumping or just falling through platform
-        return player.body.velocity.y > 0 && player.jumpDownCounter <= 0
-      })
-    this.game.physics.arcade.collide(
-      this.groups.players, this.groups.ground, (player, ground) => {
-        if (player.body.touching.down) {
-          player.touchFloor()
-        }
-      }, (player, ground) => {
-        // Don't collide if jumping
-        return player.body.velocity.y > 0
-      })
-    this.game.physics.arcade.collide(this.groups.enemies, this.groups.platforms)
-    this.game.physics.arcade.collide(this.groups.enemies, this.groups.ground)
+    this.updatePlatforming(this.groups.players)
+    this.updatePlatforming(this.groups.enemies)
 
     // Player bullets to enemy
     this.game.physics.arcade.overlap(
@@ -249,6 +227,31 @@ export default class extends Phaser.State {
       this.setText('Wave ' + this.wave.wave);
       // TODO: some sort of incidental music
     }*/
+  }
+
+  updatePlatforming(group) {
+    group.forEach((c) => {
+      c.isOnPlatform = false
+    })
+    this.game.physics.arcade.collide(
+      group, this.groups.platforms, (c, platform) => {
+        if (c.body.touching.down) {
+          c.touchFloor()
+        }
+        c.isOnPlatform = c.body.touching.down
+      }, (c, platform) => {
+        // Don't collide if jumping or just falling through platform
+        return c.body.velocity.y > 0 && c.jumpDownCounter <= 0
+      })
+    this.game.physics.arcade.collide(
+      group, this.groups.ground, (c, ground) => {
+        if (c.body.touching.down) {
+          c.touchFloor()
+        }
+      }, (c, ground) => {
+        // Don't collide if jumping
+        return c.body.velocity.y > 0
+      })
   }
 
   setText(text) {

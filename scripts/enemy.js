@@ -1,4 +1,3 @@
-import Phaser from 'phaser'
 import { TILE_SIZE } from './graphics'
 import Character from './character'
 
@@ -33,7 +32,8 @@ export default class extends Character {
     switch (this.state) {
       case 'roam':
         this.move(this.moveX, 0)
-        if (!this.isOnFloor()) {
+        // Jump as soon as we reach the end of a platform
+        if (this.onFloorCounter > 0) {
           this.jump()
         }
         break
