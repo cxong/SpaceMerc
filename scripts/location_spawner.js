@@ -1,4 +1,5 @@
 import { SCREEN_WIDTH } from './graphics'
+import Floater from './floater'
 import Robut from './robut'
 import Shorty from './shorty'
 
@@ -44,7 +45,7 @@ export default class {
       }
       // Spawn the enemies
       for (let position of positions) {
-        switch (this.game.rnd.pick([0, 1])) {
+        switch (this.game.rnd.between(0, 2)) {
           case 0:
             new Robut(
               this.game, this.groups.enemies, this.groups.enemyBullets,
@@ -52,6 +53,11 @@ export default class {
             break
           case 1:
             new Shorty(
+              this.game, this.groups.enemies, this.groups.enemyBullets,
+              position, Y)
+            break
+          case 2:
+            new Floater(
               this.game, this.groups.enemies, this.groups.enemyBullets,
               position, Y)
             break

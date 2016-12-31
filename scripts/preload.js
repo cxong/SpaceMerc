@@ -5,7 +5,8 @@ const assets = {
   spritesheets: [
     ['merc_upper', 32, 36],
     ['merc_legs', 24, 16],
-    ['block', 16, 16]
+    ['block', 16, 16],
+    ['floater', 16, 16]
   ],
   images: [
     'ground', 'bullet', 'robut', 'shorty'

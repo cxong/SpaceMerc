@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { SCREEN_WIDTH, SCREEN_HEIGHT, WORLD_WIDTH } from './graphics'
 import Camera from './camera'
+import Character from './character'
 import GroundGen from './ground'
 import LocationSpawner from './location_spawner'
 import MapGen from './mapgen'
@@ -234,24 +235,39 @@ export default class extends Phaser.State {
 
   updatePlatforming(group) {
     group.forEach((c) => {
+      if (!(c instanceof Character)) {
+        return
+      }
       c.isOnPlatform = false
     })
     this.game.physics.arcade.collide(
       group, this.groups.platforms, (c, platform) => {
+        if (!(c instanceof Character)) {
+          return
+        }
         if (c.body.touching.down) {
           c.touchFloor()
         }
         c.isOnPlatform = c.body.touching.down
       }, (c, platform) => {
+        if (!(c instanceof Character)) {
+          return false
+        }
         // Don't collide if jumping or just falling through platform
         return c.body.velocity.y > 0 && c.jumpDownCounter <= 0
       })
     this.game.physics.arcade.collide(
       group, this.groups.ground, (c, ground) => {
+        if (!(c instanceof Character)) {
+          return
+        }
         if (c.body.touching.down) {
           c.touchFloor()
         }
       }, (c, ground) => {
+        if (!(c instanceof Character)) {
+          return false
+        }
         // Don't collide if jumping
         return c.body.velocity.y > 0
       })
