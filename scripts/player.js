@@ -1,13 +1,11 @@
 import Phaser from 'phaser'
 import { TILE_SIZE } from './graphics'
+import Character from './character'
 
 const JUMP_DURATION_S = 0.4
 const JUMP_HEIGHT = TILE_SIZE * 3.5
 const SPEED = 80
-const GRAVITY = 2 * JUMP_HEIGHT / (JUMP_DURATION_S * JUMP_DURATION_S)
-const JUMP_SPEED = 2 * JUMP_HEIGHT / JUMP_DURATION_S
 const BULLET_SPEED = 400
-const JUMP_DOWN_DURATION = 200
 const MUZZLE_OFFSET_Y = -22
 const MUZZLE_OFFSET_X_UP = 3
 const MUZZLE_OFFSET_Y_PRONE = -6
@@ -22,13 +20,14 @@ const LEGS_X = 0
 const LEGS_Y = -8
 const LEGS_PRONE_X = -6
 const LEGS_PRONE_Y = -8
-const JUMP_GRACE_DURATION = 100
 
-export default class extends Phaser.Sprite {
+export default class extends Character {
   constructor(game, group, bulletGroup, x, y) {
-    super(game, x, y)
-    group.add(this)
-    game.physics.enable(this, Phaser.Physics.ARCADE)
+    super(game, group, bulletGroup, x, y, undefined, {
+      jumpHeight: JUMP_HEIGHT, jumpDurationS: JUMP_DURATION_S,
+      fireDuration: FIRE_DURATION,
+      speed: SPEED
+    })
 
     // Add body parts
     this.upper = this.addChild(game.add.sprite(0, UPPER_Y, 'merc_upper'))
@@ -44,50 +43,18 @@ export default class extends Phaser.Sprite {
 
     this.body.collideWorldBounds = true
     this.anchor.setTo(0.5, 1)
-    this.body.gravity.y = GRAVITY
-    this.dir = new Phaser.Point(1, 0)
-    this.moveX = 0
-    this.isJumping = false
-    this.isOnPlatform = false
     this.setPose(0, 0)
 
-    this.wasOnFloor = false
-    this.fireCounter = 0
     this.upperRecoilCounter = 0
-    this.jumpDownCounter = 0
-    this.onFloorCounter = 0
-
-    this.invincibilityCounter = 0
 
     this.sounds = {
       jump: game.add.audio('jump'),
       land: game.add.audio('land'),
       shoot: game.add.audio('shoot')
-    };
-
-    this.game = game;
-    this.bulletGroup = bulletGroup;
-  }
-
-  move(dx, dy) {
-    if (!this.alive) {
-      return;
-    }
-    const dir = new Phaser.Point(dx, dy)
-    if (dir.isZero()) {
-      this.dir = new Phaser.Point(this.scale.x, 0)
-    } else {
-      this.dir = dir
-    }
-    if (this.isOnFloor() || dx !== 0) {
-      this.moveX = dx
     }
   }
 
-  fire() {
-    if (!this.alive || this.fireCounter > 0) {
-      return;
-    }
+  addBullet() {
     const muzzlePos = new Phaser.Point(this.x, this.y)
     const isFacingUp = this.dir.x === 0 && this.dir.y === -1
     const isFalling = !this.isOnFloor() && !this.isJumping
@@ -110,80 +77,30 @@ export default class extends Phaser.Sprite {
     bullet.outOfBoundsKill = true
     bullet.body.gravity.y = 0
     this.sounds.shoot.play()
-    this.fireCounter = FIRE_DURATION
     this.upperRecoilCounter = UPPER_RECOIL_DURATION
   }
 
-  jump() {
-    if (!this.alive) {
-      return;
-    }
-    if (this.body.onFloor() || this.isOnFloor()) {
-      this.sounds.jump.play()
-      this.onFloorCounter = 0
-      if (this.dir.y === 1 && this.isOnPlatform) {
-        // Jump below platform
-        this.jumpDownCounter = JUMP_DOWN_DURATION
-      } else {
-        this.body.velocity.y = -JUMP_SPEED
-        this.upper.animations.play('jump')
-        this.legs.animations.play('jump')
-        this.isJumping = true
-      }
-    }
+  onJump() {
+    this.sounds.jump.play()
+  }
+
+  onJumpUp() {
+    this.upper.animations.play('jump')
+    this.legs.animations.play('jump')
+  }
+
+  onLand() {
+    this.sounds.land.play()
   }
 
   update() {
-    const onFloor = this.body.onFloor() || this.isOnFloor()
-    if (onFloor && !this.wasOnFloor) {
-      this.sounds.land.play()
-      this.isJumping = false
-    }
-    this.wasOnFloor = onFloor
-
+    super.update()
     // Update counters
-    if (this.fireCounter > 0) {
-      this.fireCounter -= this.game.time.physicsElapsedMS
-    }
     if (this.upperRecoilCounter > 0) {
       this.upperRecoilCounter -= this.game.time.physicsElapsedMS
     }
-    if (this.jumpDownCounter > 0) {
-      this.jumpDownCounter -= this.game.time.physicsElapsedMS
-    }
-    if (this.onFloorCounter > 0) {
-      this.onFloorCounter -= this.game.time.physicsElapsedMS
-    }
 
-    // Running
-    if (this.moveX === 0) {
-      this.body.velocity.x = 0
-    } else {
-      this.body.velocity.x = this.moveX * SPEED
-      this.scale.x = this.moveX > 0 ? 1 : -1
-    }
     this.setPose()
-    if (this.invincibilityCounter > 0) {
-      this.invincibilityCounter -= this.game.time.physicsElapsedMS
-      // Blink when invincible
-      this.visible = this.invincibilityCounter / 4 % 4 > 1;
-    } else {
-      this.visible = this.alive;
-    }
-  }
-
-  killAndLeaveCorpse() {
-    this.kill();
-    // Leave a limited corpse on the background layer
-    /*var corpse = this.game.make.sprite(
-      this.x, this.y, this.key);
-    corpse.anchor.setTo(0.5);
-    corpse.animations.add(
-      'die', [20, 21, 22, 23], 4, false
-    );
-    corpse.animations.play('die');
-    corpse.lifespan = 1000;
-    this.bgGroup.add(corpse);*/
   }
 
   setPose() {
@@ -259,13 +176,5 @@ export default class extends Phaser.Sprite {
       // Normal size
       this.body.setSize(10, 28, (32 - 10) / 2, 32 - 28)
     }
-  }
-
-  isOnFloor() {
-    return this.onFloorCounter > 0
-  }
-
-  touchFloor() {
-    this.onFloorCounter = JUMP_GRACE_DURATION
   }
 }
