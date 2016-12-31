@@ -1,5 +1,6 @@
 import { SCREEN_WIDTH } from './graphics'
-import Enemy from './enemy'
+import Robut from './robut'
+import Shorty from './shorty'
 
 const MIN_INTERVAL = 100
 const Y = 100
@@ -43,8 +44,18 @@ export default class {
       }
       // Spawn the enemies
       for (let position of positions) {
-        new Enemy(
-          this.game, this.groups.enemies, this.groups.enemyBullets, position, Y)
+        switch (this.game.rnd.pick([0, 1])) {
+          case 0:
+            new Robut(
+              this.game, this.groups.enemies, this.groups.enemyBullets,
+              position, Y)
+            break
+          case 1:
+            new Shorty(
+              this.game, this.groups.enemies, this.groups.enemyBullets,
+              position, Y)
+            break
+        }
       }
       this.nextSpawnX += SCREEN_WIDTH
     }

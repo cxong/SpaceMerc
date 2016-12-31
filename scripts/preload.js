@@ -8,7 +8,7 @@ const assets = {
     ['block', 16, 16]
   ],
   images: [
-    'ground', 'bullet', 'robut'
+    'ground', 'bullet', 'robut', 'shorty'
   ],
   sounds: [
     'catch', 'die', 'hit', 'land', 'jump',
