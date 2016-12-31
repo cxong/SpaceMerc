@@ -50,7 +50,7 @@ export default class extends Phaser.State {
         font: '36px VT323', fill: '#fff', align: 'center'
       }
     );
-    this.text.anchor.set(0.5);
+    this.text.anchor.setTo(0.5)
     this.groups.ui.add(this.text);
 
     // States: title, play, over

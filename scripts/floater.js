@@ -1,14 +1,15 @@
 import Phaser from 'phaser'
 import Counter from './counter'
 
-const MOVE_DURATION = 1000
-const MAX_SPEED = 160
+const MOVE_DURATION = 2000
+const MAX_SPEED = 120
 
 export default class extends Phaser.Sprite {
   constructor(game, group, bulletGroup, x, y) {
     super(game, x, y, 'floater')
     group.add(this)
     game.physics.enable(this, Phaser.Physics.ARCADE)
+    this.anchor.setTo(0.5)
 
     this.dir = new Phaser.Point(1, 0)
     this.moveCounter = new Counter(MOVE_DURATION)
@@ -34,6 +35,10 @@ export default class extends Phaser.Sprite {
   update() {
     // Update counters
     this.moveCounter.update(this.game.time.physicsElapsedMS)
+
+    // Pose
+    this.frame = Math.abs(this.body.velocity.x) > MAX_SPEED / 4 ? 0 : 1
+    this.scale.x = this.body.velocity.x > 0 ? 1 : -1
 
     switch (this.state) {
       case 'roam': {
