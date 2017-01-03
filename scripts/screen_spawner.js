@@ -1,10 +1,9 @@
 import Counter from './counter'
-import { SCREEN_WIDTH } from './graphics'
+import { SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE } from './graphics'
 import Robut from './robut'
 
 const SPAWN_DURATION_LOW = 2000
 const SPAWN_DURATION_HIGH = 4000
-const Y = 100
 
 // Constantly spawn enemies from off screen towards the players
 export default class {
@@ -27,7 +26,9 @@ export default class {
       ])
       const enemy = new Robut(
         this.game, this.groups.enemies, this.groups.enemyBullets,
-        spawn.x, Y)
+        spawn.x,
+        this.game.rnd.integerInRange(
+          TILE_SIZE * 2, SCREEN_HEIGHT - TILE_SIZE * 2))
       enemy.moveX = spawn.moveX
       this.nextSpawnCounter.reset(
         this.game.rnd.realInRange(SPAWN_DURATION_LOW, SPAWN_DURATION_HIGH))
