@@ -1,9 +1,11 @@
 import { TILE_SIZE } from './graphics'
 import Character from './character'
+import Counter from './counter'
 
-const JUMP_DURATION_S = 0.5
+const JUMP_DURATION_S = 0.3
 const JUMP_HEIGHT = TILE_SIZE * 2.1
-const SPEED = 40
+const SPEED = 70
+const IDLE_DURATION = 500
 
 export default class extends Character {
   constructor(game, group, bulletGroup, x, y) {
@@ -15,7 +17,8 @@ export default class extends Character {
     })
 
     // animations
-    // TODO
+    this.animations.add('jump', [0, 1, 2, 1], 10, false)
+    this.animations.add('land', [0, 1, 2, 1, 0], 15, false)
 
     this.sounds = {
       // TODO: alternate shoot sound
@@ -23,16 +26,42 @@ export default class extends Character {
       // TODO: death sound
     };
 
-    this.state = 'roam'
+    this.state = 'idle'
+    this.idleCounter = new Counter(IDLE_DURATION)
     this.moveX = this.game.rnd.pick([-1, 1])
+    this.moveXSave = this.moveX
+  }
+
+  onLand() {
+    this.state = 'idle'
+    this.idleCounter.reset()
+    this.animations.play('land')
   }
 
   update() {
     super.update()
     switch (this.state) {
-      case 'roam':
-        this.move(this.moveX, 0)
-        this.jump()
+      case 'before_jump':
+        // Wait until the jump animation finishes
+        break
+      case 'jump':
+        this.move(this.moveXSave, 0)
+        break
+      case 'idle':
+        this.move(0, 0)
+        if (this.isOnFloor()) {
+          this.idleCounter.update(this.game.time.physicsElapsedMS)
+        }
+        if (this.idleCounter.count <= 0) {
+          this.state = 'before_jump'
+          const anim = this.animations.play('jump')
+          anim.onComplete.add((shorty) => {
+            shorty.state = 'jump'
+            shorty.frame = 0
+            shorty.jump()
+            shorty.move(shorty.moveXSave, 0)
+          })
+        }
         break
     }
   }

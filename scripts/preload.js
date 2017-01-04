@@ -6,10 +6,11 @@ const assets = {
     ['merc_upper', 32, 36],
     ['merc_legs', 24, 16],
     ['block', 16, 16],
+    ['shorty', 16, 16],
     ['floater', 16, 16]
   ],
   images: [
-    'ground', 'bullet', 'robut', 'shorty'
+    'ground', 'bullet', 'robut'
   ],
   sounds: [
     'catch', 'die', 'hit', 'land', 'jump',
