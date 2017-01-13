@@ -9,6 +9,8 @@ export default class extends Phaser.State {
     this.game.scale.pageAlignVertically = true;
     this.game.scale.compatibility.forceMinimumDocumentHeight = true;
     this.game.scale.windowConstraints = {'right': 'layout', 'bottom': 'layout'};
+    // Prevent camera follow jitter
+    this.game.renderer.renderSession.roundPixels = true
   }
 
   preload() {
