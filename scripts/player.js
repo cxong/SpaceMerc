@@ -22,8 +22,8 @@ const LEGS_PRONE_X = -6
 const LEGS_PRONE_Y = -8
 
 export default class extends Character {
-  constructor(game, group, bulletGroup, x, y) {
-    super(game, group, bulletGroup, x, y, undefined, {
+  constructor(game, groups, x, y) {
+    super(game, groups.players, groups.playerBullets, groups, x, y, undefined, {
       jumpHeight: JUMP_HEIGHT, jumpDurationS: JUMP_DURATION_S,
       fireDuration: FIRE_DURATION,
       speed: SPEED

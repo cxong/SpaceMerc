@@ -25,8 +25,7 @@ export default class {
         { x: cameraX + SCREEN_WIDTH, moveX: -1 }
       ])
       const enemy = new Robut(
-        this.game, this.groups.enemies, this.groups.enemyBullets,
-        spawn.x,
+        this.game, this.groups, spawn.x,
         this.game.rnd.integerInRange(
           TILE_SIZE * 2, SCREEN_HEIGHT - TILE_SIZE * 2))
       enemy.moveX = spawn.moveX

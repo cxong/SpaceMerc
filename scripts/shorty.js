@@ -8,8 +8,8 @@ const SPEED = 70
 const IDLE_DURATION = 500
 
 export default class extends Character {
-  constructor(game, group, bulletGroup, x, y) {
-    super(game, group, bulletGroup, x, y, 'shorty', {
+  constructor(game, groups, x, y) {
+    super(game, groups.enemies, groups.enemyBullets, groups, x, y, 'shorty', {
       jumpHeight: JUMP_HEIGHT, jumpDurationS: JUMP_DURATION_S,
       // TODO: shooting
       //fireDuration: FIRE_DURATION,

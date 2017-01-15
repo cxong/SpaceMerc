@@ -47,19 +47,13 @@ export default class {
       for (let position of positions) {
         switch (this.game.rnd.between(0, 2)) {
           case 0:
-            new Robut(
-              this.game, this.groups.enemies, this.groups.enemyBullets,
-              position, Y)
+            new Robut(this.game, this.groups, position, Y)
             break
           case 1:
-            new Shorty(
-              this.game, this.groups.enemies, this.groups.enemyBullets,
-              position, Y)
+            new Shorty(this.game, this.groups, position, Y)
             break
           case 2:
-            new Floater(
-              this.game, this.groups.enemies, this.groups.enemyBullets,
-              position, Y)
+            new Floater(this.game, this.groups, position, Y)
             break
         }
       }

@@ -5,9 +5,9 @@ const MOVE_DURATION = 2000
 const MAX_SPEED = 120
 
 export default class extends Phaser.Sprite {
-  constructor(game, group, bulletGroup, x, y) {
+  constructor(game, groups, x, y) {
     super(game, x, y, 'floater')
-    group.add(this)
+    groups.enemies.add(this)
     game.physics.enable(this, Phaser.Physics.ARCADE)
     this.anchor.setTo(0.5)
 
@@ -15,7 +15,8 @@ export default class extends Phaser.Sprite {
     this.moveCounter = new Counter(MOVE_DURATION)
 
     this.game = game
-    this.bulletGroup = bulletGroup
+    this.bulletGroup = groups.enemyBullets
+    this.groups = groups
 
     this.state = 'roam'
   }
@@ -70,8 +71,8 @@ export default class extends Phaser.Sprite {
     }
   }
 
-  killAndLeaveCorpse() {
-    this.kill();
+  kill() {
+    super.kill()
     // Leave a limited corpse on the background layer
     /*var corpse = this.game.make.sprite(
       this.x, this.y, this.key);

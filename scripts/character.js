@@ -5,10 +5,11 @@ const JUMP_DOWN_DURATION = 200
 const JUMP_GRACE_DURATION = 100
 
 export default class extends Phaser.Sprite {
-  constructor(game, group, bulletGroup, x, y, sprite, stats) {
+  constructor(game, group, bulletGroup, groups, x, y, sprite, stats) {
     super(game, x, y, sprite)
     group.add(this)
     game.physics.enable(this, Phaser.Physics.ARCADE)
+    this.anchor.setTo(0.5)
     this.stats = stats
     this.stats.jumpSpeed = 2 * stats.jumpHeight / stats.jumpDurationS
     this.stats.gravity = 2 * stats.jumpHeight / (stats.jumpDurationS * stats.jumpDurationS)
@@ -27,6 +28,7 @@ export default class extends Phaser.Sprite {
 
     this.game = game
     this.bulletGroup = bulletGroup
+    this.groups = groups
   }
 
   move(dx, dy) {
@@ -121,18 +123,15 @@ export default class extends Phaser.Sprite {
     // override
   }
 
-  killAndLeaveCorpse() {
-    this.kill();
-    // Leave a limited corpse on the background layer
-    /*var corpse = this.game.make.sprite(
-      this.x, this.y, this.key);
-    corpse.anchor.setTo(0.5);
-    corpse.animations.add(
-      'die', [20, 21, 22, 23], 4, false
-    );
-    corpse.animations.play('die');
-    corpse.lifespan = 1000;
-    this.bgGroup.add(corpse);*/
+  kill() {
+    super.kill()
+    // Spawn an explosion sprite in the fx layer
+    const fx = this.game.make.sprite(this.x, this.y, 'explosions/regular')
+    fx.anchor.setTo(0.5)
+    const anim = fx.animations.add('fx', [0, 1, 2, 3, 4, 5], 15, false)
+    anim.killOnComplete = true
+    fx.animations.play('fx')
+    this.groups.fx.add(fx)
   }
 
   isOnFloor() {

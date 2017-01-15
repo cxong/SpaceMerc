@@ -7,7 +7,8 @@ const assets = {
     ['merc_legs', 24, 16],
     ['block', 16, 16],
     ['shorty', 16, 16],
-    ['floater', 16, 16]
+    ['floater', 16, 16],
+    ['explosions/regular', 32, 32]
   ],
   images: [
     'ground', 'bullet', 'robut'

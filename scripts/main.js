@@ -42,8 +42,9 @@ export default class extends Phaser.State {
       players: this.game.add.group(),
       enemyBullets: this.game.add.group(),
       playerBullets: this.game.add.group(),
+      fx: this.game.add.group(),
       ui: this.game.add.group()
-    };
+    }
 
     this.text = this.game.add.text(
       SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, '', {
@@ -102,9 +103,7 @@ export default class extends Phaser.State {
 
   spawnPlayer() {
     this.player = new Player(
-      this.game,
-      this.groups.players, this.groups.playerBullets,
-      SCREEN_WIDTH / 2, SCREEN_HEIGHT - 50, []);
+      this.game, this.groups, SCREEN_WIDTH / 2, SCREEN_HEIGHT - 50, [])
     this.sounds.respawn.play()
   }
 
@@ -203,7 +202,7 @@ export default class extends Phaser.State {
       function(bullet, enemy) {
         // TODO: enemy kill effects
         bullet.kill();
-        enemy.killAndLeaveCorpse();
+        enemy.kill();
         this.sounds.hit.play();
       }, null, this
     );

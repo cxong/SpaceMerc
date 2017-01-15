@@ -7,8 +7,8 @@ const JUMP_HEIGHT = TILE_SIZE * 2.5
 const SPEED = 85
 
 export default class extends Character {
-  constructor(game, group, bulletGroup, x, y) {
-    super(game, group, bulletGroup, x, y, 'robut', {
+  constructor(game, groups, x, y) {
+    super(game, groups.enemies, groups.enemyBullets, groups, x, y, 'robut', {
       jumpHeight: JUMP_HEIGHT, jumpDurationS: JUMP_DURATION_S,
       // TODO: shooting
       //fireDuration: FIRE_DURATION,
