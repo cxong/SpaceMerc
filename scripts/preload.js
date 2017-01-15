@@ -8,7 +8,8 @@ const assets = {
     ['block', 16, 16],
     ['shorty', 16, 16],
     ['floater', 16, 16],
-    ['explosions/regular', 32, 32]
+    ['explosions/regular', 32, 32],
+    ['explosions/small', 16, 16]
   ],
   images: [
     'ground', 'bullet', 'robut'

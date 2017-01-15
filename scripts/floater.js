@@ -73,15 +73,12 @@ export default class extends Phaser.Sprite {
 
   kill() {
     super.kill()
-    // Leave a limited corpse on the background layer
-    /*var corpse = this.game.make.sprite(
-      this.x, this.y, this.key);
-    corpse.anchor.setTo(0.5);
-    corpse.animations.add(
-      'die', [20, 21, 22, 23], 4, false
-    );
-    corpse.animations.play('die');
-    corpse.lifespan = 1000;
-    this.bgGroup.add(corpse);*/
+    // Spawn an explosion sprite in the fx layer
+    const fx = this.game.make.sprite(this.x, this.y, 'explosions/small')
+    fx.anchor.setTo(0.5)
+    const anim = fx.animations.add('fx', [0, 1, 2, 3, 4, 5, 6, 7, 8], 20, false)
+    anim.killOnComplete = true
+    fx.animations.play('fx')
+    this.groups.fx.add(fx)
   }
 }
