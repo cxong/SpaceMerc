@@ -18,7 +18,10 @@ const assets = {
     'catch', 'die', 'hit', 'land', 'jump',
     'nospawn', 'respawn', 'shoot', 'spawn'
   ],
-  music: ['title', '1']
+  music: ['title', '1'],
+  tilemaps: [
+    ['test_level', 'images/test_level.json']
+  ]
 }
 
 export default class extends Phaser.State {
@@ -51,6 +54,11 @@ export default class extends Phaser.State {
     assets.sounds.map(function(i) {
       basicGame.game.load.audio(i, 'sounds/' + i + '.wav');
     });
+
+    for (let tilemap of assets.tilemaps) {
+      this.game.load.tilemap(
+        tilemap[0], tilemap[1], null, Phaser.Tilemap.TILED_JSON)
+    }
   }
 
   create() {

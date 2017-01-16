@@ -65,6 +65,13 @@ export default class extends Phaser.State {
       this.start();
     }, this);
     this.music.play('title')
+
+    this.map = this.game.add.tilemap('test_level')
+    this.map.addTilesetImage(this.map.tilesets[0].name, 'block')
+    this.map.layers.forEach((layer) => {
+      const l = this.map.createLayer(layer.name)
+      l.resizeWorld()
+    })
   }
 
   start() {
@@ -129,7 +136,7 @@ export default class extends Phaser.State {
         this.game.camera.x, 0, WORLD_WIDTH - this.game.camera.x, SCREEN_HEIGHT)
       this.locationSpawner.update(this.game.camera.x)
       this.screenSpawner.update(this.game.camera.x)
-      this.mapgen.update(this.game.camera.x)
+      //this.mapgen.update(this.game.camera.x)
       this.groundGen.update(this.game.camera.x)
 
       // Destroy stuff that's too far to the left
@@ -201,9 +208,9 @@ export default class extends Phaser.State {
       this.groups.playerBullets, this.groups.enemies,
       function(bullet, enemy) {
         // TODO: enemy kill effects
-        bullet.kill();
-        enemy.kill();
-        this.sounds.hit.play();
+        bullet.kill()
+        enemy.kill()
+        this.sounds.hit.play()
       }, null, this
     );
 
