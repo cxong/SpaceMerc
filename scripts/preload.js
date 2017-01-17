@@ -12,7 +12,8 @@ const assets = {
     ['explosions/small', 16, 16]
   ],
   images: [
-    'collision_block', 'ground', 'bullet', 'robut'
+    'collision_block', 'ground', 'bullet',
+    'player_hud_back', 'player_hud_health', 'robut'
   ],
   sounds: [
     'catch', 'die', 'hit', 'land', 'jump',

@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { TILE_SIZE } from './graphics'
+import { MAX_HEALTH, TILE_SIZE } from './graphics'
 import Character from './character'
 
 const JUMP_DURATION_S = 0.4
@@ -28,6 +28,8 @@ export default class extends Character {
       fireDuration: FIRE_DURATION,
       speed: SPEED
     })
+
+    this.health = MAX_HEALTH
 
     // Add body parts
     this.upper = this.addChild(game.add.sprite(0, UPPER_Y, 'merc_upper'))
@@ -99,6 +101,10 @@ export default class extends Character {
     if (this.upperRecoilCounter > 0) {
       this.upperRecoilCounter -= this.game.time.physicsElapsedMS
     }
+
+    // Slow health regen
+    this.health = Math.min(
+      MAX_HEALTH, this.health + this.game.time.physicsElapsedMS * 0.0003)
 
     this.setPose()
   }

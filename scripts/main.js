@@ -7,6 +7,7 @@ import LocationSpawner from './location_spawner'
 import MapGen from './mapgen'
 import Music from './music'
 import Player from './player'
+import PlayerHUD from './player_hud'
 import ScreenSpawner from './screen_spawner'
 import Wave from './wave'
 
@@ -69,7 +70,7 @@ export default class extends Phaser.State {
     this.map = this.game.add.tilemap('test_level')
     this.map.addTilesetImage(this.map.tilesets[0].name, 'block')
     this.map.layers.forEach((layer) => {
-      const l = this.map.createLayer(layer.name)
+      const l = this.map.createLayer(layer.name)
       l.debug = true
       l.resizeWorld()
       if (layer.name === 'platforms') {
@@ -88,7 +89,7 @@ export default class extends Phaser.State {
           })
         })
       }
-    })
+    })
   }
 
   start() {
@@ -128,6 +129,7 @@ export default class extends Phaser.State {
   spawnPlayer() {
     this.player = new Player(
       this.game, this.groups, SCREEN_WIDTH / 2, SCREEN_HEIGHT - 50, [])
+    this.playerHUD = new PlayerHUD(this.game, this.groups.ui, this.player, 8, 8)
     this.sounds.respawn.play()
   }
 
@@ -240,9 +242,24 @@ export default class extends Phaser.State {
           return;
         }
         player.damage(10);
-        this.sounds.hit.play();
+        this.sounds.hit.play()
       }, null, this
-    );
+    )
+
+    // Enemy to player
+    this.game.physics.arcade.overlap(
+      this.groups.enemies, this.groups.players,
+      function(enemy, player) {
+        if (player.invincibilityCounter > 0) {
+          // Can't kill when invincible
+          return
+        }
+        player.damage(1)
+        enemy.kill()
+        // TODO: hurt sound
+        this.sounds.hit.play()
+      }, null, this
+    )
 
     // Enemy spawning
     // Note: spawn next wave if less than half wave
