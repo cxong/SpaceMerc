@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { SCREEN_WIDTH, SCREEN_HEIGHT, WORLD_WIDTH } from './graphics'
+import { SCREEN_WIDTH, SCREEN_HEIGHT, TILE_SIZE, WORLD_WIDTH } from './graphics'
 import Camera from './camera'
 import Character from './character'
 import GroundGen from './ground'
@@ -70,7 +70,24 @@ export default class extends Phaser.State {
     this.map.addTilesetImage(this.map.tilesets[0].name, 'block')
     this.map.layers.forEach((layer) => {
       const l = this.map.createLayer(layer.name)
+      l.debug = true
       l.resizeWorld()
+      if (layer.name === 'platforms') {
+        layer.data.forEach((row) => {
+          row.forEach((tile) => {
+            if (tile.index > 0) {
+              // Add a block for collision
+              const b = this.groups.platforms.create(
+                tile.x * TILE_SIZE, tile.y * TILE_SIZE, 'collision_block')
+              this.game.physics.enable(b, Phaser.Physics.ARCADE)
+              b.body.immovable = true
+              b.body.checkCollision.down = false
+              b.body.checkCollision.left = false
+              b.body.checkCollision.right = false
+            }
+          })
+        })
+      }
     })
   }
 
