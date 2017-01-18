@@ -7,8 +7,14 @@ export default class extends Phaser.Group {
     this.fixedToCamera = true
     this.cameraOffset.setTo(x, y)
     this.player = player
-    this.back = this.create(0, 0, 'player_hud_back')
-    this.health = this.create(8, 0, 'player_hud_health')
+    this.text = game.add.text(
+      0, 0, 'P1', {
+        font: '12px VT323', fill: '#fff', align: 'center'
+      }
+    )
+    this.add(this.text)
+    this.back = this.create(0, 16, 'player_hud_back')
+    this.health = this.create(8, 16, 'player_hud_health')
     this.healthWidth = this.health.width
   }
 
