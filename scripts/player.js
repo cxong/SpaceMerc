@@ -1,17 +1,16 @@
 import Phaser from 'phaser'
 import { MAX_HEALTH, TILE_SIZE } from './graphics'
+import Bullet from './bullet'
 import Character from './character'
 
 const JUMP_DURATION_S = 0.4
 const JUMP_HEIGHT = TILE_SIZE * 3.5
 const SPEED = 80
-const BULLET_SPEED = 400
 const MUZZLE_OFFSET_Y = -22
 const MUZZLE_OFFSET_X_UP = 3
 const MUZZLE_OFFSET_Y_PRONE = -6
 const MUZZLE_LENGTH = 16
 const FIRE_DURATION = 150
-const RECOIL = 0.05
 const UPPER_RECOIL_DURATION = 30
 const UPPER_Y = -24
 const UPPER_PRONE_X = 6
@@ -54,6 +53,8 @@ export default class extends Character {
       land: game.add.audio('land'),
       shoot: game.add.audio('shoot')
     }
+
+    this.bullet = 'rifle'
   }
 
   addBullet() {
@@ -67,17 +68,8 @@ export default class extends Character {
       isProne ? MUZZLE_OFFSET_Y_PRONE : MUZZLE_OFFSET_Y)
     const v = (isProne ? new Phaser.Point(this.scale.x, 0) : this.dir).clone().normalize()
     muzzlePos.add(v.x * MUZZLE_LENGTH, v.y * MUZZLE_LENGTH)
-    const bullet = this.bulletGroup.create(muzzlePos.x, muzzlePos.y, 'bullet')
-    this.game.physics.enable(bullet, Phaser.Physics.ARCADE)
-    bullet.anchor.setTo(0.5)
-    v.add(
-      (this.game.rnd.frac() - 0.5) * RECOIL,
-      (this.game.rnd.frac() - 0.5) * RECOIL)
-    v.setMagnitude(BULLET_SPEED)
-    bullet.body.velocity = v
-    bullet.rotation = Math.atan2(v.y, v.x)
-    bullet.outOfBoundsKill = true
-    bullet.body.gravity.y = 0
+    this.bulletGroup.add(
+      new Bullet(this.game, muzzlePos.x, muzzlePos.y, this.bullet, v))
     this.sounds.shoot.play()
     this.upperRecoilCounter = UPPER_RECOIL_DURATION
   }
@@ -93,6 +85,10 @@ export default class extends Character {
 
   onLand() {
     this.sounds.land.play()
+  }
+
+  switchWeapon() {
+    this.bullet = this.bullet === 'rifle' ? 'rocket' : 'rifle'
   }
 
   update() {

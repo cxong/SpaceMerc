@@ -13,7 +13,7 @@ const assets = {
   ],
   images: [
     'collision_block', 'ground', 'bullet',
-    'player_hud_back', 'player_hud_health', 'robut'
+    'player_hud_back', 'player_hud_health', 'robut', 'rocket', 'smoke'
   ],
   sounds: [
     'catch', 'die', 'hit', 'land', 'jump',

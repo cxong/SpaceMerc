@@ -119,8 +119,12 @@ export default class extends Phaser.State {
       left: Phaser.Keyboard.LEFT,
       right: Phaser.Keyboard.RIGHT,
       fire: Phaser.Keyboard.X,
-      jump: Phaser.Keyboard.Z
-    });
+      jump: Phaser.Keyboard.Z,
+      switchWeapon: Phaser.Keyboard.C
+    })
+    this.keyflips = {
+      switchWeapon: false
+    }
 
     this.state = 'play';
     this.music.play('l1')
@@ -198,12 +202,22 @@ export default class extends Phaser.State {
 
       // firing
       if (this.keys.fire.isDown) {
-        this.player.fire();
+        this.player.fire()
       }
 
       // Jumping
       if (this.keys.jump.isDown) {
-        this.player.jump();
+        this.player.jump()
+      }
+
+      // Switch gun
+      if (this.keys.switchWeapon.isDown) {
+        if (!this.keyflips.switchWeapon) {
+          this.player.switchWeapon()
+          this.keyflips.switchWeapon = true
+        }
+      } else {
+        this.keyflips.switchWeapon = false
       }
 
       // End game
