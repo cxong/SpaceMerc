@@ -10,8 +10,6 @@ export default class extends Character {
   constructor(game, groups, x, y) {
     super(game, groups.enemies, groups.enemyBullets, groups, x, y, 'robut', {
       jumpHeight: JUMP_HEIGHT, jumpDurationS: JUMP_DURATION_S,
-      // TODO: shooting
-      //fireDuration: FIRE_DURATION,
       speed: SPEED
     })
 
@@ -19,10 +17,10 @@ export default class extends Character {
     // TODO
 
     this.sounds = {
-      // TODO: alternate shoot sound
-      shoot: game.add.audio('shoot')
       // TODO: death sound
-    };
+    }
+    
+    // TODO: guns
 
     this.state = 'roam'
     this.edgeBehavior = this.game.rnd.pick(['continue', 'jump', 'reverse'])

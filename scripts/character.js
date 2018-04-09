@@ -22,9 +22,11 @@ export default class extends Phaser.Sprite {
 
     this.wasOnFloor = false
     // TODO: refactor counters
-    this.fireCounter = 0
     this.jumpDownCounter = 0
     this.onFloorCounter = 0
+
+    this.guns = []
+    this.gunIndex = 0
 
     this.game = game
     this.bulletGroup = bulletGroup
@@ -46,16 +48,28 @@ export default class extends Phaser.Sprite {
     }
   }
 
-  fire() {
-    if (!this.alive || this.fireCounter > 0) {
-      return;
+  canFire() {
+    if (!this.alive) {
+      return false
     }
-    this.addBullet()
-    this.fireCounter = this.stats.fireDuration
+    const gun = this.guns[this.gunIndex]
+    if (!gun || !gun.canFire()) {
+      return false
+    }
+    return true
   }
 
-  addBullet() {
-    // override
+  fire() {
+    const gun = this.guns[this.gunIndex]
+    gun.fire(this.getMuzzlePos(), this.getMuzzleV())
+  }
+
+  getMuzzlePos() {
+    return new Phaser.Point(this.x, this.y)
+  }
+
+  getMuzzleV() {
+    return this.dir
   }
 
   jump() {
@@ -93,8 +107,8 @@ export default class extends Phaser.Sprite {
     this.wasOnFloor = onFloor
 
     // Update counters
-    if (this.fireCounter > 0) {
-      this.fireCounter -= this.game.time.physicsElapsedMS
+    if (this.guns[this.gunIndex]) {
+      this.guns[this.gunIndex].update()
     }
     if (this.jumpDownCounter > 0) {
       this.jumpDownCounter -= this.game.time.physicsElapsedMS

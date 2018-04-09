@@ -202,7 +202,9 @@ export default class extends Phaser.State {
 
       // firing
       if (this.keys.fire.isDown) {
-        this.player.fire()
+        if (this.player.canFire()) {
+          this.player.fire()
+        }
       }
 
       // Jumping

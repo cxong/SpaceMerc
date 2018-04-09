@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
 import { MAX_HEALTH, TILE_SIZE } from './graphics'
-import Bullet from './bullet'
 import Character from './character'
+import Gun from './gun'
 
 const JUMP_DURATION_S = 0.4
 const JUMP_HEIGHT = TILE_SIZE * 3.5
@@ -10,7 +10,6 @@ const MUZZLE_OFFSET_Y = -22
 const MUZZLE_OFFSET_X_UP = 3
 const MUZZLE_OFFSET_Y_PRONE = -6
 const MUZZLE_LENGTH = 16
-const FIRE_DURATION = 150
 const UPPER_RECOIL_DURATION = 30
 const UPPER_Y = -24
 const UPPER_PRONE_X = 6
@@ -20,12 +19,13 @@ const LEGS_Y = -8
 const LEGS_PRONE_X = -6
 const LEGS_PRONE_Y = -8
 
+const RIFLE_FIRE_DURATION = 150
+const ROCKET_FIRE_DURATION = 250
+
 export default class extends Character {
   constructor(game, groups, x, y) {
     super(game, groups.players, groups.playerBullets, groups, x, y, undefined, {
-      jumpHeight: JUMP_HEIGHT, jumpDurationS: JUMP_DURATION_S,
-      fireDuration: FIRE_DURATION,
-      speed: SPEED
+      jumpHeight: JUMP_HEIGHT, jumpDurationS: JUMP_DURATION_S, speed: SPEED
     })
 
     this.health = MAX_HEALTH
@@ -50,14 +50,26 @@ export default class extends Character {
 
     this.sounds = {
       jump: game.add.audio('jump'),
-      land: game.add.audio('land'),
-      shoot: game.add.audio('shoot')
+      land: game.add.audio('land')
     }
 
-    this.bullet = 'rifle'
+    this.guns = [
+      new Gun(game, this.bulletGroup, 'rifle', 'shoot', {
+        fireDuration: RIFLE_FIRE_DURATION
+      }),
+      new Gun(game, this.bulletGroup, 'rocket', 'rocket', {
+        fireDuration: ROCKET_FIRE_DURATION
+      })
+    ]
+    this.gunIndex = 0
   }
 
-  addBullet() {
+  fire() {
+    super.fire()
+    this.upperRecoilCounter = UPPER_RECOIL_DURATION
+  }
+
+  getMuzzlePos() {
     const muzzlePos = new Phaser.Point(this.x, this.y)
     const isFacingUp = this.dir.x === 0 && this.dir.y === -1
     const isFalling = !this.isOnFloor() && !this.isJumping
@@ -66,12 +78,14 @@ export default class extends Character {
     muzzlePos.add(
       (isFacingUp || isFacingDown) ? MUZZLE_OFFSET_X_UP * this.scale.x : 0,
       isProne ? MUZZLE_OFFSET_Y_PRONE : MUZZLE_OFFSET_Y)
-    const v = (isProne ? new Phaser.Point(this.scale.x, 0) : this.dir).clone().normalize()
+    const v = this.getMuzzleV()
     muzzlePos.add(v.x * MUZZLE_LENGTH, v.y * MUZZLE_LENGTH)
-    this.bulletGroup.add(
-      new Bullet(this.game, muzzlePos.x, muzzlePos.y, this.bullet, v))
-    this.sounds.shoot.play()
-    this.upperRecoilCounter = UPPER_RECOIL_DURATION
+    return muzzlePos
+  }
+
+  getMuzzleV() {
+    const isProne = this.isOnFloor() && this.dir.x === 0 && this.dir.y === 1
+    return (isProne ? new Phaser.Point(this.scale.x, 0) : this.dir).clone().normalize()
   }
 
   onJump() {
@@ -88,7 +102,7 @@ export default class extends Character {
   }
 
   switchWeapon() {
-    this.bullet = this.bullet === 'rifle' ? 'rocket' : 'rifle'
+    this.gunIndex = (this.gunIndex + 1) % this.guns.length
   }
 
   update() {

@@ -21,18 +21,6 @@ export default class extends Phaser.Sprite {
     this.state = 'roam'
   }
 
-  fire() {
-    if (!this.alive || this.fireCounter > 0) {
-      return;
-    }
-    this.addBullet()
-    this.fireCounter = this.stats.fireDuration
-  }
-
-  addBullet() {
-    // override
-  }
-
   update() {
     // Update counters
     this.moveCounter.update(this.game.time.physicsElapsedMS)

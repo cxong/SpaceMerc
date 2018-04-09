@@ -11,8 +11,6 @@ export default class extends Character {
   constructor(game, groups, x, y) {
     super(game, groups.enemies, groups.enemyBullets, groups, x, y, 'shorty', {
       jumpHeight: JUMP_HEIGHT, jumpDurationS: JUMP_DURATION_S,
-      // TODO: shooting
-      //fireDuration: FIRE_DURATION,
       speed: SPEED
     })
 
@@ -21,10 +19,10 @@ export default class extends Character {
     this.animations.add('land', [0, 1, 2, 1, 0], 15, false)
 
     this.sounds = {
-      // TODO: alternate shoot sound
-      shoot: game.add.audio('shoot')
       // TODO: death sound
-    };
+    }
+    
+    // TODO: guns
 
     this.state = 'idle'
     this.idleCounter = new Counter(IDLE_DURATION)

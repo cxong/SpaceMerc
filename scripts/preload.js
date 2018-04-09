@@ -17,7 +17,7 @@ const assets = {
   ],
   sounds: [
     'catch', 'die', 'hit', 'land', 'jump',
-    'nospawn', 'respawn', 'shoot', 'spawn'
+    'nospawn', 'respawn', 'rocket', 'shoot', 'spawn'
   ],
   music: ['title', '1'],
   tilemaps: [
